@@ -27,6 +27,7 @@ S prijavo v aplikacijo lahko:
 ---
 
 ## Tehnične podrobnosti
+...
 
-
+## ER diagram
 ![Blank diagram](https://github.com/user-attachments/assets/d2d29988-5db0-4c12-a34d-0994b02a16f7)
