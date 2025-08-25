@@ -11,7 +11,8 @@ class Podjetje:
     id: int = field(default=0) 
     ime: str = field(default="") 
     sedez: str = field(default="") 
-    kontakt: str = field(default="") 
+    kontakt: str = field(default="")
+    username: str = field(default="")  # povezava na Uporabnik
 
 @dataclass_json
 @dataclass
@@ -28,10 +29,10 @@ class Student:
     emso: str = field(default="")
     ime: str = field(default="")
     priimek: str = field(default="")
-    kontakt: str = field(default="")
+    kontakt: int = field(default=0) 
     povprecna_ocena: float = field(default=0.0)
     univerza_id: int = field(default=0)  # referenca na tabelo Univezra
-
+    username: str = field(default="")    # povezava na Uporabnik
 
 @dataclass_json
 @dataclass
@@ -100,12 +101,11 @@ class Prijava:
 @dataclass
 class Uporabnik:
     username: str = field(default="")
-    role: str = field(default="")   # "student" ali "podjetje"
+    role: str = field(default="")   # "student", "podjetje", "admin"
     password_hash: str = field(default="")
-    last_login: str = field(default="")
+    last_login: datetime = field(default_factory=datetime.now)
 
 @dataclass
 class UporabnikDto:
     username: str = field(default="")
     role: str = field(default="")
-    
