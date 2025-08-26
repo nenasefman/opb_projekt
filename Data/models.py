@@ -95,6 +95,13 @@ class Prijava:
     student_emso: str = field(default="")     # referenca na Student
     pripravnistvo_id: int = field(default=0)  # referenca na Pripravnistvo
 
+@dataclass_json
+@dataclass
+class PrijavaDto:
+    id: int = field(default=0)
+    status: str = field(default="")
+    datum: datetime = field(default_factory=datetime.now)
+    delovno_mesto: str = field(default="")
 
 # -----------------------------
 @dataclass_json

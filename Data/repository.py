@@ -4,12 +4,13 @@ import Data.auth_public as auth
 import os
 from typing import List
 
-from Data.models import Uporabnik, UporabnikDto, Prijava, Pripravnistvo, PripravnistvoDto
+from Data.models import (
+    Uporabnik, Prijava, Pripravnistvo, PripravnistvoDto,
+    Student, StudentDto, Podjetje, PodjetjeDto, PrijavaDto
+)
 
 # Preberemo port za bazo iz okoljskih spremenljivk
 DB_PORT = os.environ.get('POSTGRES_PORT', 5432)
-
-# V tej datoteki bomo implementirali razred Repo, ki bo vseboval metode za delo z bazo.
 
 
 class Repo:
@@ -48,52 +49,113 @@ class Repo:
         """, (uporabnik.last_login, uporabnik.username))
         self.conn.commit()
 
+    # ----------------- Študenti ----------------
+    def dodaj_studenta(self, student: Student):
+        self.cur.execute("""
+            INSERT INTO student(emso, ime, priimek, kontakt, povprecna_ocena, univerza_id, username)
+            VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """, (student.emso, student.ime, student.priimek, student.kontakt,
+              student.povprecna_ocena, student.univerza_id, student.username))
+        self.conn.commit()
+
+    def dobi_studenta(self, username: str) -> Student:
+        self.cur.execute("""
+            SELECT emso, ime, priimek, kontakt, povprecna_ocena, univerza_id, username
+            FROM student
+            WHERE username = %s
+        """, (username,))
+        s = self.cur.fetchone()
+        return Student.from_dict(s) if s else None
+
+    def dobi_studenta_dto(self, username: str) -> StudentDto:
+        self.cur.execute("""
+            SELECT s.emso, s.ime, s.priimek, u.ime_univerze AS univerza
+            FROM student s
+            JOIN univerza u ON s.univerza_id = u.id
+            WHERE s.username = %s
+        """, (username,))
+        s = self.cur.fetchone()
+        return StudentDto.from_dict(s) if s else None
+
+    # ----------------- Podjetja ----------------
+    def dodaj_podjetje(self, podjetje: Podjetje):
+        self.cur.execute("""
+            INSERT INTO podjetje(ime, sedez, kontakt, username)
+            VALUES (%s, %s, %s, %s)
+        """, (podjetje.ime, podjetje.sedez, podjetje.kontakt, podjetje.username))
+        self.conn.commit()
+
+    def dobi_podjetje(self, username: str) -> Podjetje:
+        self.cur.execute("""
+            SELECT id, ime, sedez, kontakt, username
+            FROM podjetje
+            WHERE username = %s
+        """, (username,))
+        p = self.cur.fetchone()
+        return Podjetje.from_dict(p) if p else None
+
+    def dobi_podjetje_dto(self, username: str) -> PodjetjeDto:
+        self.cur.execute("""
+            SELECT p.id, p.ime, p.kontakt, COUNT(pr.id) AS st_pripravnistev
+            FROM podjetje p
+            LEFT JOIN pripravnistvo pr ON pr.podjetje_id = p.id
+            WHERE p.username = %s
+            GROUP BY p.id, p.ime, p.kontakt
+        """, (username,))
+        r = self.cur.fetchone()
+        return PodjetjeDto.from_dict(r) if r else None
+
     # ---------------- Pripravništva ----------------
     def dobi_vsa_pripravnistva(self) -> List[Pripravnistvo]:
         self.cur.execute("""
             SELECT id, delovno_mesto, trajanje, placilo, drzava, kraj, stevilo_mest, podjetje_id, podrocje_id
             FROM pripravnistvo
-            Order by trajanje DESC             
+            ORDER BY trajanje DESC
         """)
-        pripravnistva =[Pripravnistvo.from_dict(p) for p in self.cur.fetchall()]
-        return pripravnistva
-    
+        return [Pripravnistvo.from_dict(p) for p in self.cur.fetchall()]
+
     def dobi_pripravnistva_dto(self) -> List[PripravnistvoDto]:
         self.cur.execute("""
             SELECT p.id, p.delovno_mesto, p.trajanje, p.placilo, 
-                   podjetje.ime as podjetje, podrocje.podrocje as podrocje, p.stevilo_mest
+                   pod.ime AS podjetje, po.podrocje AS podrocje, p.stevilo_mest
             FROM pripravnistvo p
-            JOIN podjetje ON p.podjetje_id = podjetje.id
-            JOIN podrocje ON p.podrocje_id = podrocje.id
+            JOIN podjetje pod ON p.podjetje_id = pod.id
+            JOIN podrocje po ON p.podrocje_id = po.id
             ORDER BY p.trajanje DESC
         """)
-        pripravnistva_dto = [PripravnistvoDto.from_dict(p) for p in self.cur.fetchall()]
-        return pripravnistva_dto
-    
+        return [PripravnistvoDto.from_dict(p) for p in self.cur.fetchall()]
+
     def dobi_pripravnistvo(self, id: int) -> Pripravnistvo:
         self.cur.execute("""
             SELECT id, delovno_mesto, trajanje, placilo, drzava, kraj, stevilo_mest, podjetje_id, podrocje_id
             FROM pripravnistvo
             WHERE id = %s
         """, (id,))
-        p = Pripravnistvo.from_dict(self.cur.fetchone())
-        return p
-    
+        r = self.cur.fetchone()
+        return Pripravnistvo.from_dict(r) if r else None
+
     def dodaj_pripravnistvo(self, p: Pripravnistvo):
         self.cur.execute("""
-            INSERT INTO pripravnistvo(delovno_mesto, trajanje, placilo, drzava, kraj, stevilo_mest)
-            VALUES (%s, %s, %s, %s, %s, %s)
-        """, (p.delovno_mesto, p.trajanje, p.placilo, p.drzava, p.kraj, p.stevilo_mest))
+            INSERT INTO pripravnistvo(delovno_mesto, trajanje, placilo, drzava, kraj, stevilo_mest, podjetje_id, podrocje_id)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        """, (p.delovno_mesto, p.trajanje, p.placilo, p.drzava, p.kraj,
+              p.stevilo_mest, p.podjetje_id, p.podrocje_id))
         self.conn.commit()
 
     # ---------------- Prijave na pripravništva ----------------
-    def dobi_prijave_uporabnika(self, username: str) -> List[Prijava]:
+    def dobi_prijave_uporabnika(self, student_emso: str) -> List[PrijavaDto]:
         self.cur.execute("""
-            SELECT id, uporabnik, pripravnistvo_id, datum, status
-            FROM prijava
-            WHERE uporabnik = %s
-        """, (username,))
-        prijava = [Prijava.from_dict(pr) for pr in self.cur.fetchall()]
-        return prijava
+            SELECT pr.id, pr.status, pr.datum, p.delovno_mesto
+            FROM prijava pr
+            JOIN pripravnistvo p ON pr.pripravnistvo_id = p.id
+            WHERE pr.student_emso = %s
+        """, (student_emso,))
+        return [PrijavaDto.from_dict(pr) for pr in self.cur.fetchall()]
+
+    def dodaj_prijavo(self, prijava: Prijava):
+        self.cur.execute("""
+            INSERT INTO prijava(status, datum, student_emso, pripravnistvo_id)
+            VALUES (%s, %s, %s, %s)
+        """, (prijava.status, prijava.datum, prijava.student_emso, prijava.pripravnistvo_id))
+        self.conn.commit()
     
-#rabiva še: dodaj prijavo, posodobi (status) prijave, verjetno tudi dodaj podjetje in dodaj studenta am to nevem kako nardis ker sva itak ze dodali uporabnika ??
