@@ -43,25 +43,10 @@ CREATE TABLE Prijava (
 
 CREATE TABLE Uporabnik (
     username TEXT PRIMARY KEY,
+    role TEXT NOT NULL CHECK (role IN ('student', 'podjetje', 'admin')),
     password_hash TEXT NOT NULL,
     last_login TIMESTAMP);
-    role TEXT NOT NULL CHECK (role IN ('student', 'podjetje', 'admin')),
 
-CREATE TABLE IF NOT EXISTS Registracija (
-    uporabnisko_ime TEXT PRIMARY KEY,
-    uporabnisko_geslo TEXT NOT NULL);
-
-
--- js bi to mal drgač: ne rabva pomojem posebi registracije ampak sam uporabnik in pol
--- k uporabnik napiše not username geslo pa role izpolne se dodatne podatke glede na to a
--- je podjetje al student in pol se linka uporabnik na eno izmed teh dveha tabel kamor se 
--- pol shranjujejo dejanski podatki od folka
-
-
--- 1) Odstranimo nepotrebno tabelo Registracija
-DROP TABLE IF EXISTS Registracija;
-
--- 2) Dodamo povezave iz Student in Podjetje na Uporabnik
 ALTER TABLE Student 
 ADD COLUMN username TEXT UNIQUE REFERENCES Uporabnik(username) ON DELETE CASCADE;
 
