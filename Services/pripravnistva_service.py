@@ -6,17 +6,13 @@ from datetime import datetime
 class PripravnistvaService:
     def __init__(self) -> None:
         self.repo = Repo()
-    
+
     # ---------------- Študenti ----------------
-    
-    def dobi_studenta(self, emso: str) -> Optional[Student]:
-        return self.repo.dobi_studenta(emso)
+    def dobi_studenta(self, username: str) -> Optional[Student]:
+        return self.repo.dobi_studenta(username)
 
-    def dobi_studente(self) -> List[Student]:
-        return self.repo.dobi_studente()
-
-    def dobi_studente_dto(self) -> List[StudentDto]:
-        return self.repo.dobi_studente_dto()
+    def dobi_studenta_dto(self, username: str) -> Optional[StudentDto]:
+        return self.repo.dobi_studenta_dto(username)
 
     def dodaj_studenta(self, student: Student) -> None:
         self.repo.dodaj_studenta(student)
@@ -24,36 +20,40 @@ class PripravnistvaService:
     def posodobi_studenta(self, student: Student) -> None:
         self.repo.posodobi_studenta(student)
 
-    def izbrisi_studenta(self, emso: str) -> None:
-        self.repo.izbrisi_studenta(emso)
-    
+    def izbrisi_studenta(self, username: str) -> None:
+        self.repo.izbrisi_studenta(username)
 
-    # ---------------- Prijave na pripravništva ----------------
+    # ---------------- Podjetja ----------------
+    def dobi_podjetje(self, username: str) -> Optional[Podjetje]:
+        return self.repo.dobi_podjetje(username)
 
-    def dobi_prijave_studenta(self, emso: str) -> List[PrijavaDto]:
-        return self.repo.dobi_prijave_studenta(emso)
+    def dobi_podjetje_dto(self, username: str) -> Optional[PodjetjeDto]:
+        return self.repo.dobi_podjetje_dto(username)
 
-    def dobi_prijave_na_pripravnistvo(self, pripravnistvo_id: int) -> List[PrijavaDto]:
-        return self.repo.dobi_prijave_na_pripravnistvo(pripravnistvo_id)
+    def dodaj_podjetje(self, podjetje: Podjetje) -> None:
+        self.repo.dodaj_podjetje(podjetje)
 
-    def oddaj_prijavo(self, prijava: Prijava) -> None:
-        prijava.cas_prijave = datetime.now()
-        self.repo.dodaj_prijavo(prijava)
+    def posodobi_podjetje(self, podjetje: Podjetje) -> None:
+        self.repo.posodobi_podjetje(podjetje)
 
-    def izbrisi_prijavo(self, prijava_id: int) -> None:
-        self.repo.izbrisi_prijavo(prijava_id)
+    def izbrisi_podjetje(self, username: str) -> None:
+        self.repo.izbrisi_podjetje(username)
 
+    def dobi_vsa_podjetja_dto(self) -> List[PodjetjeDto]:
+        return self.repo.dobi_vsa_podjetja_dto()
 
     # ---------------- Pripravništva ----------------
-    
-    def dobi_pripravnistva(self) -> List[Pripravnistvo]:
-        return self.repo.dobi_pripravnistva()
-    
-    def dobi_pripravnistva_dto(self) -> List[PripravnistvoDto]:
-        return self.repo.dobi_pripravnistva_dto()
-
     def dobi_pripravnistvo(self, id: int) -> Optional[Pripravnistvo]:
         return self.repo.dobi_pripravnistvo(id)
+
+    def dobi_pripravnistvo_dto(self, id: int) -> Optional[PripravnistvoDto]:
+        return self.repo.dobi_pripravnistvo_dto(id)
+
+    def dobi_vsa_pripravnistva(self) -> List[Pripravnistvo]:
+        return self.repo.dobi_vsa_pripravnistva()
+
+    def dobi_vsa_pripravnistva_dto(self) -> List[PripravnistvoDto]:
+        return self.repo.dobi_vsa_pripravnistva_dto()
 
     def dodaj_pripravnistvo(self, pripravnistvo: Pripravnistvo) -> None:
         self.repo.dodaj_pripravnistvo(pripravnistvo)
@@ -64,23 +64,25 @@ class PripravnistvaService:
     def izbrisi_pripravnistvo(self, id: int) -> None:
         self.repo.izbrisi_pripravnistvo(id)
 
+    # ---------------- Prijave ----------------
+    def dobi_prijave_studenta(self, username: str) -> List[Prijava]:
+        return self.repo.dobi_prijave_studenta(username)
 
-    # ---------------- Podjetja ----------------
-    
-    def dobi_podjetje(self, username: str) -> Optional[Podjetje]:
-        return self.repo.dobi_podjetje(username)
+    def dobi_prijave_studenta_dto(self, username: str) -> List[PrijavaDto]:
+        return self.repo.dobi_prijave_studenta_dto(username)
 
-    def dobi_podjetja(self) -> List[Podjetje]:
-        return self.repo.dobi_podjetja()
+    def dobi_prijave_na_pripravnistvo(self, id: int) -> List[Prijava]:
+        return self.repo.dobi_prijave_na_pripravnistvo(id)
 
-    def dobi_podjetja_dto(self) -> List[PodjetjeDto]:
-        return self.repo.dobi_podjetja_dto()
+    def dobi_prijave_na_pripravnistvo_dto(self, id: int) -> List[PrijavaDto]:
+        return self.repo.dobi_prijave_na_pripravnistvo_dto(id)
 
-    def dodaj_podjetje(self, podjetje: Podjetje) -> None:
-        self.repo.dodaj_podjetje(podjetje)
+    def dobi_prijave_podjetja(self, username: str) -> List[Prijava]:
+        return self.repo.dobi_prijave_podjetja(username)
 
-    def posodobi_podjetje(self, podjetje: Podjetje) -> None:
-        self.repo.posodobi_podjetje(podjetje)
+    def dobi_prijave_podjetja_dto(self, username: str) -> List[PrijavaDto]:
+        return self.repo.dobi_prijave_podjetja_dto(username)
 
-    def izbrisi_podjetje(self, username: str) -> None:
-        self.repo.izbrisi_podjetje(username)
+    def posodobi_prijavo(self, prijava: Prijava) -> None:
+        self.repo.posodobi_prijavo(prijava)
+
