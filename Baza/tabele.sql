@@ -1,3 +1,5 @@
+# Generiramo tabele, ki jih potrebujemo
+
 CREATE TABLE Podjetje (
     id INTEGER PRIMARY KEY,
 	ime TEXT NOT NULL,
@@ -46,6 +48,8 @@ CREATE TABLE Uporabnik (
     role TEXT NOT NULL CHECK (role IN ('student', 'podjetje', 'admin')),
     password_hash TEXT NOT NULL,
     last_login TIMESTAMP);
+
+# Dodamo še nekaj stolpcev
 
 ALTER TABLE Student 
 ADD COLUMN username TEXT UNIQUE REFERENCES Uporabnik(username) ON DELETE CASCADE;
