@@ -5,105 +5,7 @@ from datetime import datetime
 # V tej datoteki definiramo vse podatkovne modele, ki jih bomo uporabljali v aplikaciji.
 
 # -----------------------------
-@dataclass_json
-@dataclass
-class Podjetje:
-    id: int = field(default=0) 
-    ime: str = field(default="") 
-    sedez: str = field(default="") 
-    kontakt: str = field(default="")
-    username: str = field(default="")  # povezava na Uporabnik
-
-@dataclass_json
-@dataclass
-class PodjetjeDto:
-    id: int = field(default=0)
-    ime: str = field(default="")
-    kontakt: str = field(default="")
-    st_pripravnistev: int = field(default=0)  # število pripravništev, ki jih ima podjetje
-
-# -----------------------------
-@dataclass_json
-@dataclass
-class Student:
-    emso: str = field(default="")
-    ime: str = field(default="")
-    priimek: str = field(default="")
-    kontakt: int = field(default=0) 
-    povprecna_ocena: float = field(default=0.0)
-    univerza_id: int = field(default=0)  # referenca na tabelo Univezra
-    username: str = field(default="")    # povezava na Uporabnik
-
-@dataclass_json
-@dataclass
-class StudentDto:
-    emso: str = field(default="")
-    ime: str = field(default="")
-    priimek: str = field(default="")
-    univerza: str = field(default="")  # join na Univerza
-
-# -----------------------------
-@dataclass_json
-@dataclass
-class Univerza:
-    id: int = field(default=0)
-    ime_univerze: str = field(default="")
-    fakulteta: str = field(default="")
-    kontakt: str = field(default="")
-
-
-# -----------------------------
-@dataclass_json
-@dataclass
-class Podrocje:
-    id: int = field(default=0)
-    podrocje: str = field(default="")
-    veja: str = field(default="")
-
-# -----------------------------
-@dataclass_json
-@dataclass
-class Pripravnistvo:
-    id: int = field(default=0)
-    delovno_mesto: str = field(default="")
-    trajanje: int = field(default=0)   # v mesecih
-    placilo: float = field(default=0.0)
-    drzava: str = field(default="")
-    kraj: str = field(default="")
-    stevilo_mest: int = field(default=0)
-    podjetje_id: int = field(default=0)   # referenca na Podjetje
-    podrocje_id: int = field(default=0)   # referenca na Podrocje
-
-@dataclass_json
-@dataclass
-class PripravnistvoDto:
-    id: int = field(default=0)
-    delovno_mesto: str = field(default="")
-    trajanje: int = field(default=0)
-    placilo: float = field(default=0.0)
-    podjetje: str = field(default="")   # join na podjetje
-    podrocje: str = field(default="")   # join na področje
-    stevilo_mest: int = field(default=0) 
-
-# -----------------------------
-@dataclass_json
-@dataclass
-class Prijava:
-    id: int = field(default=0)
-    status: str = field(default="") # npr. "v obravnavi", "odobrena", "zavrnjena"
-    datum: datetime = field(default=datetime.now())
-    student_emso: str = field(default="")     # referenca na Student
-    pripravnistvo_id: int = field(default=0)  # referenca na Pripravnistvo
-
-@dataclass_json
-@dataclass
-class PrijavaDto:
-    id: int = field(default=0)
-    status: str = field(default="")
-    datum: datetime = field(default_factory=datetime.now)
-    delovno_mesto: str = field(default="")
-
-# -----------------------------
+# Uporabnik 
 @dataclass_json
 @dataclass
 class Uporabnik:
@@ -116,3 +18,90 @@ class Uporabnik:
 class UporabnikDto:
     username: str = field(default="")
     role: str = field(default="")
+
+# -----------------------------
+# Študent
+@dataclass_json
+@dataclass
+class Student:
+    username: str = field(default="")    # povezava na Uporabnik
+    ime: str = field(default="")
+    priimek: str = field(default="")
+    kontakt_tel: int = field(default=0) 
+    povprecna_ocena: float = field(default=0.0)
+    univerza: str = field(default="")
+
+@dataclass_json
+@dataclass
+class StudentDto:
+    ime: str = field(default="")
+    priimek: str = field(default="")
+    kontakt_tel: int = field(default=0)
+    povprecna_ocena: float = field(default=0.0)
+    univerza: str = field(default="")
+
+# -----------------------------
+# Podjetje
+@dataclass_json
+@dataclass
+class Podjetje:
+    username: str = field(default="")   # povezava na Uporabnik
+    ime: str = field(default="") 
+    sedez: str = field(default="") 
+    kontakt_mail: str = field(default="")
+
+@dataclass_json
+@dataclass
+class PodjetjeDto:
+    ime: str = field(default="")
+    kontakt_mail: str = field(default="")
+    sedez: str = field(default="")
+    st_pripravnistev: int = field(default=0)  # število pripravništev, ki jih ima podjetje, JOIN na tabelo pripravnistvo
+
+# -----------------------------
+# Pripravništva
+@dataclass_json
+@dataclass
+class Pripravnistvo:
+    id: int = field(default=0)
+    trajanje: int = field(default=0)   # v mesecih
+    delovno_mesto: str = field(default="")
+    opis_dela: str = field(default="")
+    placilo: float = field(default=0.0)
+    drzava: str = field(default="")
+    kraj: str = field(default="")
+    stevilo_mest: int = field(default=1)  # število prostih mest
+    podjetje: str = field(default="")   # referenca na Podjetje
+
+@dataclass_json
+@dataclass
+class PripravnistvoDto:
+    id: int = field(default=0)
+    trajanje: int = field(default=0)   # v mesecih
+    delovno_mesto: str = field(default="")
+    opis_dela: str = field(default="")
+    placilo: float = field(default=0.0)
+    drzava: str = field(default="")
+    kraj: str = field(default="")
+    stevilo_mest: int = field(default=1)  # število prostih mest
+    podjetje: int = field(default=0)   # join na podjetje (ime podjetja)
+
+# -----------------------------
+# Prijave na pripravništva
+@dataclass_json
+@dataclass
+class Prijava:
+    id: int = field(default=0)
+    status: str = field(default="") # npr. "v obravnavi", "odobrena", "zavrnjena"
+    datum_prijave: datetime = field(default_factory=datetime.now)
+    student: str = field(default="")     # referenca na Student
+    pripravnistvo: int = field(default=0)  # referenca na Pripravnistvo
+
+@dataclass_json
+@dataclass
+class PrijavaDto:
+    student: str = field(default="")   # join na študenta (ime in priimek)
+    podjetje: str = field(default="")  # join na podjetje (ime podjetja)
+    pripravnistvo: str = field(default="")  # join na pripravništvo (delovno mesto)
+    status: str = field(default="")
+    datum_prijave: datetime = field(default_factory=datetime.now)
