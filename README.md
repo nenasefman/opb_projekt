@@ -30,5 +30,6 @@ S prijavo v aplikacijo lahko:
 ...
 
 ## ER diagram
+<img width="2369" height="880" alt="Blank diagram" src="https://github.com/user-attachments/assets/23f6adc2-66e9-4d40-8731-e693cb56a6dc" />
 
-![Blank diagram.pdf](https://github.com/userattachments/files/22034726/Blank.diagram.pdf)
+
