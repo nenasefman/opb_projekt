@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Izbira vloge</title>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .center-align-button {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .center-align-button .btn {
+            margin: 0 1.5cm;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="nav-wrapper">
+            <span class="brand-logo center">Izbira vloge</span>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="row center-align-button">
+            <form action="{{url('izbira_role_post')}}" method="post">
+                <button class="btn waves-effect waves-light" type="submit" name="role" value="admin">
+                    Skrbnik (admin)
+                    <i class="material-icons right">supervisor_account</i>
+                </button>
+                <button class="btn waves-effect waves-light" type="submit" name="role" value="user">
+                    Uporabnik (user)
+                    <i class="material-icons right">person</i>
+                </button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>
