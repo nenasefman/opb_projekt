@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Registracija Podjetja</title>
+</head>
+<body>
+    <h1>Registracija Podjetja</h1>
+    <form action="/register_podjetje" method="post">
+        <label for="username">Uporabniško ime:</label><br>
+        <input type="text" id="username" name="username" required><br><br>
+
+        <label for="password">Geslo:</label><br>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <label for="confirm_password">Potrdi geslo:</label><br>
+        <input type="password" id="confirm_password" name="confirm_password" required><br><br>
+
+        <label for="ime">Ime podjetja:</label><br>
+        <input type="text" id="ime" name="ime" required><br><br>
+
+        <label for="sedez">Sedež podjetja:</label><br>
+        <input type="text" id="sedez" name="sedez" required><br><br>
+
+        <label for="kontakt_mail">Kontaktni e-mail:</label><br>
+        <input type="email" id="kontakt_mail" name="kontakt_mail" required><br><br>
+
+        <input type="hidden" name="role" value="podjetje">
+
+        <input type="submit" value="Registriraj podjetje">
+    </form>
+</body>
+</html>

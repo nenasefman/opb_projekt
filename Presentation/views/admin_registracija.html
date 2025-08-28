@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Registracija Admin</title>
+</head>
+<body>
+    <h1>Registracija Administratorja</h1>
+    <form action="/register_admin" method="post">
+        <label for="username">Uporabniško ime:</label><br>
+        <input type="text" id="username" name="username" required><br><br>
+
+        <label for="password">Geslo:</label><br>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <label for="confirm_password">Potrdi geslo:</label><br>
+        <input type="password" id="confirm_password" name="confirm_password" required><br><br>
+
+        <input type="hidden" name="role" value="admin">
+
+        <input type="submit" value="Registriraj admina">
+    </form>
+</body>
+</html>

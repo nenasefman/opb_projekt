@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Registracija Študenta</title>
+</head>
+<body>
+    <h1>Registracija Študenta</h1>
+    <form action="/register_student" method="post">
+        <label for="username">Uporabniško ime:</label><br>
+        <input type="text" id="username" name="username" required><br><br>
+
+        <label for="password">Geslo:</label><br>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <label for="confirm_password">Potrdi geslo:</label><br>
+        <input type="password" id="confirm_password" name="confirm_password" required><br><br>
+
+        <label for="ime">Ime:</label><br>
+        <input type="text" id="ime" name="ime" required><br><br>
+
+        <label for="priimek">Priimek:</label><br>
+        <input type="text" id="priimek" name="priimek" required><br><br>
+
+        <label for="kontakt_tel">Telefonska številka:</label><br>
+        <input type="text" id="kontakt_tel" name="kontakt_tel" required><br><br>
+
+        <label for="univerza">Univerza:</label><br>
+        <input type="text" id="univerza" name="univerza" required><br><br>
+
+        <input type="hidden" name="role" value="student">
+
+        <input type="submit" value="Registriraj študenta">
+    </form>
+</body>
+</html>
