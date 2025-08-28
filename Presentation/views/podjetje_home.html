@@ -1,18 +1,12 @@
-<!DOCTYPE html>
-<html lang="sl">
-<head>
-    <meta charset="UTF-8">
-    <title>Domača stran podjetja</title>
-</head>
-<body>
-    <h1>Domača stran podjetja</h1>
+%rebase('osnova.html', naslov='Domača stran podjetja')
 
-    <p>Pozdravljeni, {{ username }}!</p>
+<h3>Pozdravljeni, {{ username }}!</h3>
 
-    <ul>
-        <li><a href="/moje_pripravnistva">Moja pripravništva</a></li>
-        <li><a href="/prijave_na_moje_pripravnistva">Prijave na pripravništva</a></li>
-        <li><a href="/logout">Odjava</a></li>
-    </ul>
-</body>
-</html>
+<h5>Prijave na vaša pripravništva:</h5>
+<ul>
+% for prijava in prijave:
+    <li>{{ prijava.student_username }} - {{ prijava.pripravnistvo_naziv }}</li>
+% end
+</ul>
+
+<p><a href="/odjava">Odjava</a></p>

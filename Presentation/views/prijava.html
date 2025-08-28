@@ -1,21 +1,16 @@
-%rebase('osnova.html', naslov='Prijava', stran='prijava')
+%rebase('osnova.html', naslov='Prijava')
 
-<!DOCTYPE html>
-<html lang="sl">
-<head>
-    <meta charset="UTF-8">
-    <title>Prijava</title>
-</head>
-<body>
-    <h1>Prijava</h1>
-    <form action="/login" method="post">
-        <label for="username">Uporabniško ime:</label><br>
-        <input type="text" id="username" name="username" required><br><br>
+<h3>Prijava</h3>
+<form action="/prijava" method="post">
+    <label for="username">Uporabniško ime:</label><br>
+    <input type="text" id="username" name="username" required><br><br>
 
-        <label for="password">Geslo:</label><br>
-        <input type="password" id="password" name="password" required><br><br>
+    <label for="password">Geslo:</label><br>
+    <input type="password" id="password" name="password" required><br><br>
 
-        <input type="submit" value="Prijavi se">
-    </form>
-</body>
-</html>
+    <input type="submit" value="Prijavi se">
+</form>
+
+% if napaka:
+    <p style="color:red;">{{ napaka }}</p>
+% end
