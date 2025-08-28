@@ -36,7 +36,7 @@ def index():
         redirect(url('urejanje'))
     else:
         filter_text = request.query.filter_text or ''
-        osebe_dto = service.dobi_brezstika_osebe(username)
+        osebe_dto = service.dobi_(username)
         oseba = service.dobi_osebo(username)
         return template('domaca_stran.html', oseba=oseba, osebe=osebe_dto, filter_text=filter_text)
     
@@ -78,41 +78,48 @@ def odjava():
 
 ################################### REGISTRACIJA ###################################
 
-@get('/izbira_role')
+# izberemo vlogo; admin ali student ali podjetje
+@app.get('/izbira_role')
 def izbira_role():
     return template('izbira_role.html')
 
-@post('/izbira_role')
+# glede na izbrano vlogo preusmeri na ustrezno registracijo
+@app.post('/izbira_role')
 def izbira_role_post():
     role = request.forms.get('role')
     if role == 'admin':
+        # Preusmeri na admin registracijo
         redirect(url('admin_auth'))
-    elif role == 'user':
-        redirect(url('register'))
+    elif role == 'student':
+        # Preusmeri na registracijo študenta
+        redirect(url('student_registracija'))
+    elif role == 'podjetje':
+        # Preusmeri na registracijo podjetja
+        redirect(url('register_podjetje'))
 
-###################################  ###################################
+
+
 
 # Registracija študenta
-@get('/student_register')
-def student_register_get():
-    return template('student_register.html', napaka=None)
+@get('/student_registracija')
+def student_registracija_get():
+    return template('student_registracija.html', napaka=None)
 
-@post('/student_register')
-def student_register_post():
+@post('/student_registracija')
+def student_registracija_post():
     # Podatki iz obrazca
     username = request.forms.get('username')
     password = request.forms.get('password')
-    emso = request.forms.get('emso')
+    confirm_password = request.forms.get('confirm_password')
     ime = request.forms.get('ime')
     priimek = request.forms.get('priimek')
-    mail = request.forms.get('mail')
     kontakt = request.forms.get('kontakt')
     
     # Preverimo, ali uporabnik že obstaja
     if auth.obstaja_uporabnik(username):
-        return template('student_register.html', napaka="Uporabnik s tem imenom že obstaja!")
+        return template('student_registracija.html', napaka="Uporabnik s tem imenom že obstaja!")
     if service.dobi_studenta(username): # Preveri, če je študent z istim uporabniškim imenom že registriran
-         return template('student_register.html', napaka="Študent s tem uporabniškim imenom že obstaja!")
+         return template('student_registracija.html', napaka="Študent s tem uporabniškim imenom že obstaja!")
 
     # Ustvarimo novega uporabnika in študenta
     try:
@@ -132,15 +139,18 @@ def student_register_post():
         redirect(url('prijava_get')) # Po uspešni registraciji preusmerimo na prijavo
     except Exception as e:
         # Boljše obvladovanje napak
-        return template('student_register.html', napaka=f"Napaka pri registraciji: {e}")
+        return template('student_registracija.html', napaka=f"Napaka pri registraciji: {e}")
+
+
+
 
 # Registracija podjetja
-@get('/podjetje_register')
-def podjetje_register_get():
-    return template('podjetje_register.html', napaka=None)
+@get('/podjetje_registracija')
+def podjetje_registracija_get():
+    return template('podjetje_registracija.html', napaka=None)
 
-@post('/podjetje_register')
-def podjetje_register_post():
+@post('/podjetje_registracija')
+def podjetje_registracija_post():
     username = request.forms.get('username')
     password = request.forms.get('password')
     ime_podjetja = request.forms.get('ime_podjetja')
@@ -148,9 +158,9 @@ def podjetje_register_post():
     sedez = request.forms.get('sedez')
 
     if auth.obstaja_uporabnik(username):
-        return template('podjetje_register.html', napaka="Uporabnik s tem imenom že obstaja!")
+        return template('podjetje_registracija.html', napaka="Uporabnik s tem imenom že obstaja!")
     if service.dobi_podjetje(username):
-        return template('podjetje_register.html', napaka="Podjetje s tem uporabniškim imenom že obstaja!")
+        return template('podjetje_registracija.html', napaka="Podjetje s tem uporabniškim imenom že obstaja!")
     
     try:
         auth.registriraj_uporabnika(username, password, 'podjetje')
@@ -165,7 +175,14 @@ def podjetje_register_post():
         service.dodaj_podjetje(new_podjetje)
         redirect(url('prijava_get'))
     except Exception as e:
-        return template('podjetje_register.html', napaka=f"Napaka pri registraciji podjetja: {e}")
+        return template('podjetje_registracija.html', napaka=f"Napaka pri registraciji podjetja: {e}")
+
+
+
+
+
+
+
 
 # Registracija/prijava admina (lahko je posebna pot ali preko obstoječe prijava_post z rolo)
 @get('/admin_register')
@@ -488,7 +505,7 @@ def urejanje_admin_panel():
     return template('admin_panel.html', rola=rola)
 
 
-# Zaženemo strežnik
+# Zaženemo strežnik 
 if __name__ == '__main__':
     run(host='localhost', port=SERVER_PORT, reloader=RELOADER, debug=True)
 
