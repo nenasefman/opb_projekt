@@ -1,10 +1,10 @@
 import psycopg2, psycopg2.extensions, psycopg2.extras
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
-import auth_public as auth
+from Data import auth_public as auth
 import os
 from typing import List
 
-from models import (
+from .models import (
     Uporabnik, Student, StudentDto, Podjetje, PodjetjeDto,
     Pripravnistvo, PripravnistvoDto, Prijava, PrijavaDto
 )

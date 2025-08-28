@@ -5,7 +5,7 @@ from Services.auth_service import AuthService
 import os
 
 # Ustvarimo instance servisov, ki jih potrebujemo.
-service = pripravnistva_service()
+service = PripravnistvaService()
 auth = AuthService()
 
 # privzete nastavitve

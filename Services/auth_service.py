@@ -3,6 +3,7 @@ from Data.repository import Repo
 from Data.models import *
 import bcrypt
 from datetime import date
+from typing import Union
 
 
 class AuthService:
@@ -42,7 +43,7 @@ class AuthService:
         return UporabnikDto(username=uporabnik, role=rola)
     
 
-    def prijavi_uporabnika(self, uporabnik : str, geslo: str) -> UporabnikDto | bool :
+    def prijavi_uporabnika(self, uporabnik : str, geslo: str) -> Union[UporabnikDto, bool]:
         '''Preveri, če sta uporabnik in geslo pravilna. Če sta, vrne UporabnikDto, sicer False.'''
 
         # dobimo uporabnika iz baze
