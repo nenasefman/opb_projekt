@@ -16,34 +16,31 @@
 <div class="container d-flex justify-content-center">
   <div class="register-container">
     <h2 class="mb-4 text-center">Registracija Podjetja</h2>
-    <form action="/register_podjetje" method="post">
+
+    % if napaka:
+      <div class="alert alert-danger">{{napaka}}</div>
+    % end
+
+    <form action="/podjetje_registracija" method="post">
       <div class="mb-3">
-        <label for="username" class="form-label">Uporabniško ime</label>
-        <input type="text" id="username" name="username" class="form-control" required>
+        <label for="ime" class="form-label">Naziv podjetja</label>
+        <input type="text" id="ime" name="ime" class="form-control" value="{{ime}}" required>
       </div>
+
       <div class="mb-3">
-        <label for="password" class="form-label">Geslo</label>
-        <input type="password" id="password" name="password" class="form-control" required>
+        <label for="kontakt_mail" class="form-label">Kontaktni e-mail</label>
+        <input type="email" id="kontakt_mail" name="kontakt_mail" class="form-control" value="{{kontakt_mail}}" required>
       </div>
+
       <div class="mb-3">
-        <label for="confirm_password" class="form-label">Potrdi geslo</label>
-        <input type="password" id="confirm_password" name="confirm_password" class="form-control" required>
+        <label for="sedez" class="form-label">Sedež podjetja</label>
+        <input type="text" id="sedez" name="sedez" class="form-control" value="{{sedez}}" required>
       </div>
-      <div class="mb-3">
-        <label for="naziv" class="form-label">Naziv podjetja</label>
-        <input type="text" id="naziv" name="naziv" class="form-control" required>
-      </div>
-      <div class="mb-3">
-        <label for="kontakt_email" class="form-label">Kontaktni e-mail</label>
-        <input type="email" id="kontakt_email" name="kontakt_email" class="form-control" required>
-      </div>
-      <div class="mb-3">
-        <label for="naslov" class="form-label">Naslov</label>
-        <input type="text" id="naslov" name="naslov" class="form-control" required>
-      </div>
+
       <input type="hidden" name="role" value="podjetje">
       <button type="submit" class="btn btn-primary w-100">Registriraj podjetje</button>
     </form>
+
     <hr>
     <p class="text-center mt-3">
       Že imaš račun?
