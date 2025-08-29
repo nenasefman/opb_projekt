@@ -160,38 +160,62 @@ def registracija_post():
 @get('/student_registracija', name='student_registracija')
 def student_registracija_get():
     username = request.get_cookie("reg_username")
-    if not username:
-        redirect(url('registracija'))  # če ni piškotka, preusmeri nazaj na osnovno registracijo
-    return template('student_registracija.html', username=username, napaka=None)
+    role = request.get_cookie("reg_role")
+
+    if not username or role != "student":
+        redirect(url('registracija'))  # fallback na osnovno registracijo
+    
+    return template('student_registracija.html', napaka=None, username=None, 
+                    ime="", priimek="", kontakt_tel="", povprecna_ocena="", univerza="")
 
 @post('/student_registracija')
 def student_registracija_post():
+    # Preberemo username iz piškotka
     username = request.get_cookie("reg_username")
-    if not username:
+    role = request.get_cookie("reg_role")
+
+    if not username or role != "student":
         redirect(url('registracija'))
 
+    # Podatki iz obrazca
     ime = request.forms.get('ime')
     priimek = request.forms.get('priimek')
-    kontakt = request.forms.get('kontakt')
+    kontakt_tel = request.forms.get('kontakt_tel')
     povprecna_ocena = request.forms.get('povprecna_ocena')
     univerza = request.forms.get('univerza')
 
+    # Preverimo, če podjetje s tem username že obstaja
+    if service.dobi_studenta(username):
+        return template('student_registracija.html', napaka="Študent s tem uporabniškim imenom že obstaja!", 
+                        username=username, ime=ime, priimek=priimek, kontakt_tel=kontakt_tel, 
+                        povprecna_ocena=povprecna_ocena, univerza=univerza)
+
+    # Ustvarimo nov objekt Študent in ga dodamo v bazo
     try:
-        new_student = Student(
+        nov_student = Student(
             username=username,
             ime=ime,
             priimek=priimek,
-            kontakt_tel=int(kontakt) if kontakt else 0,
-            povprecna_ocena=float(povprecna_ocena) if povprecna_ocena else 0.0,
+            kontakt_tel=int(kontakt_tel),
+            povprecna_ocena=float(povprecna_ocena),
             univerza=univerza
         )
-        service.dodaj_studenta(new_student)
-        # Po uspešni registraciji izbrišemo piškotke in preusmerimo na prijavo
-        response.delete_cookie("reg_username")
-        response.delete_cookie("reg_role")
-        redirect(url('prijava_get'))
+        service.dodaj_studenta(nov_student)
+    
+    except HTTPResponse as r:   # to pusti redirectu da gre naprej
+        raise r
     except Exception as e:
-        return template('student_registracija.html', username=username, napaka=f"Napaka pri registraciji: {e}")
+        import traceback
+        traceback.print_exc()   # izpiše cel stacktrace v konzolo
+        return template('student_registracija.html', napaka=f"Napaka pri registraciji: {e}", 
+                        username=username, ime=ime, priimek=priimek, kontakt_tel=kontakt_tel, 
+                        povprecna_ocena=povprecna_ocena, univerza=univerza)
+    
+    # Po uspešni registraciji pobrišemo piškotke in preusmerimo na prijavo
+    response.delete_cookie("reg_username")
+    response.delete_cookie("reg_role")
+    return redirect(url('prijava_get'))
+
 
 # Prikaz obrazca za podjetje
 @get('/podjetje_registracija', name='podjetje_registracija')
@@ -233,7 +257,6 @@ def podjetje_registracija_post():
             kontakt_mail=kontakt_mail
         )
         service.dodaj_podjetje(novo_podjetje)
-        # Po uspešni registraciji pobrišemo piškotke in preusmerimo na prijavo
     
     except HTTPResponse as r:   # to pusti redirectu da gre naprej
         raise r
@@ -243,6 +266,7 @@ def podjetje_registracija_post():
         return template('podjetje_registracija.html', napaka=f"Napaka pri registraciji: {e}", 
                         username=username, ime=ime, kontakt_mail=kontakt_mail, sedez=sedez)
     
+    # Po uspešni registraciji pobrišemo piškotke in preusmerimo na prijavo
     response.delete_cookie("reg_username")
     response.delete_cookie("reg_role")
     return redirect(url('prijava_get'))
