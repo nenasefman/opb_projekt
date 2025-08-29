@@ -113,7 +113,7 @@ def odjava():
 # Prikaz obrazca za registracijo
 @get('/registracija')
 def registracija_get():
-    return template('registracija_osnovno.html', napaka=None)
+    return template('registracija.html', napaka=None)
 
 @post('/registracija')
 def registracija_post():
@@ -128,7 +128,7 @@ def registracija_post():
 
     # Preverimo, ali uporabnik že obstaja
     if auth.obstaja_uporabnik(username):
-        return template('registracija_osnovno.html', napaka="Uporabnik s tem imenom že obstaja!")
+        return template('registracija.html', napaka="Uporabnik s tem imenom že obstaja!")
 
     # Ustvarimo uporabnika v bazi (tabela uporabnik)
     auth.dodaj_uporabnika(username, password, role)
@@ -143,8 +143,7 @@ def registracija_post():
     elif role == 'podjetje':
         redirect(url('podjetje_registracija'))
     elif role == 'admin':
-        redirect(url('admin_registracija'))  # Če boš implementirala admin registracijo
-    else:
+        redirect(url('admin_registracija'))  
         redirect(url('registracija'))  # fallback
 
 # Prikaz obrazca za študenta
@@ -353,7 +352,7 @@ def podjetje_uredi_post():
         return template('podjetje_uredi.html', podjetje=podjetje, napaka=f"Napaka: {e}")
 
 ############################### PRIPRAVNIŠTVA ##############################
-#
+
 #@get('/pripravnistva')
 #@cookie_required
 #def pripravnistva_list():
