@@ -71,7 +71,7 @@ def podjetje_home():
     # Pridobimo prijave za vsa pripravništva tega podjetja.
     prijave = service.dobi_prijave_podjetja_dto(username)
     
-    return template('podjetje_home.html', prijave=prijave, username=username)
+    return template('podjetje_home.html', prijave=prijave, username=username, napaka=None)
     
 # ------------------------------- PRIJAVA IN ODJAVA ------------------------------
 
