@@ -3,15 +3,18 @@ from Data.models import *
 from typing import List, Optional
 from datetime import datetime
 
+# V tej datoteki bomo definirali razred za obdelavo in prijavo na pripravništvo
+
 class PripravnistvaService:
     def __init__(self) -> None:
-        self.repo = Repo()
+        self.repo = Repo()          # Potrebovali bomo instanco repozitorija. Po drugi strani bi tako instanco 
+                                    # lahko dobili tudi kot input v konstrukturju.
 
     # ---------------- Študenti ----------------
-    def dobi_studenta(self, username: str) -> Optional[Student]:
+    def dobi_studenta(self, username: str) -> List[Student]:
         return self.repo.dobi_studenta(username)
 
-    def dobi_studenta_dto(self, username: str) -> Optional[StudentDto]:
+    def dobi_studenta_dto(self, username: str) -> List[StudentDto]:
         return self.repo.dobi_studenta_dto(username)
 
     def dodaj_studenta(self, student: Student) -> None:
@@ -85,4 +88,3 @@ class PripravnistvaService:
 
     def posodobi_prijavo(self, prijava: Prijava) -> None:
         self.repo.posodobi_prijavo(prijava)
-

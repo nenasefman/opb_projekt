@@ -1,16 +1,14 @@
 from functools import wraps
-from bottle import redirect, HTTPResponse
+from bottle import redirect, HTTPResponse, request, response, template, get, post, url
 from Presentation.bottleext import *
 from Services.pripravnistva_service import PripravnistvaService
 from Services.auth_service import AuthService
 from Data.models import Student, Podjetje
 import os
 
-# Ustvarimo instance servisov, ki jih potrebujemo.
 service = PripravnistvaService()
 auth = AuthService()
 
-# privzete nastavitve
 SERVER_PORT = int(os.environ.get('BOTTLE_PORT', 8080))
 RELOADER = os.environ.get('BOTTLE_RELOADER', True)
 
@@ -35,9 +33,9 @@ def index():
 
     rola = request.get_cookie("rola")
     if rola == 'student':
-        redirect(url('student_home'))
+        raise redirect(url('student_home'))
     elif rola == 'podjetje':
-        redirect(url('podjetje_home'))
+        raise redirect(url('podjetje_home'))
     elif rola == 'admin':
         redirect(url('admin'))
         return template('prijava.html', uporabnik=None, rola=None, napaka=None)
@@ -50,12 +48,12 @@ def student_home():
     rola = request.get_cookie("rola")
     
     if rola != 'student':
-        redirect(url('index'))
+        raise redirect(url('index'))
     
-    # Pridobimo seznam pripravništev
     pripravnistva = service.dobi_vsa_pripravnistva_dto()
     
     return template('student_home.html', pripravnistva=pripravnistva, username=username, napaka=None)
+
 
 @get('/podjetje/home', name='podjetje_home')
 @cookie_required
@@ -66,15 +64,19 @@ def podjetje_home():
     rola = request.get_cookie("rola")
     
     if rola != 'podjetje':
-        redirect(url('index'))
+        raise redirect(url('index'))
     
-    # Pridobimo prijave za vsa pripravništva tega podjetja.
     prijave = service.dobi_prijave_podjetja_dto(username)
     
+<<<<<<< HEAD
     return template('podjetje_home.html', prijave=prijave, username=username, napaka=None)
     
 # ------------------------------- PRIJAVA IN ODJAVA ------------------------------
+=======
+    return template('podjetje_home.html', prijave=prijave, username=username)
+>>>>>>> 5759c1a4ce3fb674acc20bfc76f7ea5d19db51b4
 
+# -------------------------------- PRIJAVA --------------------------------
 @post('/prijava')
 def prijava():
     """
@@ -91,12 +93,16 @@ def prijava():
     if prijava:
         response.set_cookie("uporabnik", username)
         response.set_cookie("rola", prijava.role)
-        
+
+        # Direktna preusmeritev na ustrezno domačo stran
         if prijava.role == 'admin':
-            redirect(url('urejanje'))
+            raise redirect(url('urejanje'))
+        elif prijava.role == 'student':
+            raise redirect(url('student_home'))
+        elif prijava.role == 'podjetje':
+            raise redirect(url('podjetje_home'))
         else:
-            redirect(url('index'))
-        
+            raise redirect(url('prijava_get'))
     else:
         return template("prijava.html", uporabnik=None, rola=None, napaka="Neuspešna prijava. Napačno geslo ali uporabniško ime.")
 
@@ -104,6 +110,7 @@ def prijava():
 def prijava_get():
     return template('prijava.html', uporabnik=None, rola=None, napaka=None)
 
+# -------------------------------- ODJAVA --------------------------------
 @get('/odjava', name='odjava')
 def odjava():
     """
