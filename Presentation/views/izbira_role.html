@@ -2,25 +2,76 @@
 <html lang="sl">
 <head>
     <meta charset="UTF-8">
-    <title>Prijava</title>
+    <title>Registracija</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #fff4e6; /* nežno oranžno ozadje */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .register-container {
+            max-width: 500px;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin-top: 60px;
+        }
+        h2 {
+            font-weight: bold;
+            color: #ff7b00;
+        }
+        .btn-primary {
+            background-color: #ff7b00;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #e66a00;
+        }
+        .form-label {
+            font-weight: 500;
+        }
+    </style>
 </head>
 <body>
-    <h1>Prijava</h1>
-    <form action="/login" method="post">
-        <label for="username">Uporabniško ime:</label><br>
-        <input type="text" id="username" name="username" required><br><br>
+<div class="container d-flex justify-content-center">
+    <div class="register-container">
+        <h2 class="mb-4 text-center">Registracija</h2>
 
-        <label for="password">Geslo:</label><br>
-        <input type="password" id="password" name="password" required><br><br>
+        <form action="/register" method="post">
+            <div class="mb-3">
+                <label for="username" class="form-label">Uporabniško ime</label>
+                <input type="text" id="username" name="username" class="form-control" required>
+            </div>
 
-        <label for="role">Vloga:</label><br>
-        <select id="role" name="role" required>
-            <option value="student">Študent</option>
-            <option value="podjetje">Podjetje</option>
-            <option value="admin">Admin</option>
-        </select><br><br>
+            <div class="mb-3">
+                <label for="password" class="form-label">Geslo</label>
+                <input type="password" id="password" name="password" class="form-control" required>
+            </div>
 
-        <input type="submit" value="Prijavi se">
-    </form>
+            <div class="mb-3">
+                <label for="confirm_password" class="form-label">Potrdi geslo</label>
+                <input type="password" id="confirm_password" name="confirm_password" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="role" class="form-label">Vloga</label>
+                <select id="role" name="role" class="form-select" required>
+                    <option value="student">Študent</option>
+                    <option value="podjetje">Podjetje</option>
+                    <option value="admin">Admin</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Registriraj se</button>
+        </form>
+
+        <hr>
+        <p class="text-center mt-3">
+            Že imaš račun? 
+            <a href="/prijava" class="btn btn-secondary btn-sm">Prijava</a>
+        </p>
+    </div>
+</div>
 </body>
 </html>
