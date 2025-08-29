@@ -68,13 +68,9 @@ def podjetje_home():
     
     prijave = service.dobi_prijave_podjetja_dto(username)
     
-<<<<<<< HEAD
     return template('podjetje_home.html', prijave=prijave, username=username, napaka=None)
     
 # ------------------------------- PRIJAVA IN ODJAVA ------------------------------
-=======
-    return template('podjetje_home.html', prijave=prijave, username=username)
->>>>>>> 5759c1a4ce3fb674acc20bfc76f7ea5d19db51b4
 
 # -------------------------------- PRIJAVA --------------------------------
 @post('/prijava')
