@@ -27,19 +27,20 @@ def cookie_required(f):
         return template("prijava.html", uporabnik=None, rola=None, napaka="Potrebna je prijava!")
     return decorated
 
-@get('/', method=['GET','POST'])
-@cookie_required
+@route('/', method=['GET', 'POST'])
 def index():
-    rola = request.get_cookie("rola")
+    uporabnik = request.get_cookie("uporabnik")
+    if not uporabnik:
+        redirect(url('prijava_get'))
 
+    rola = request.get_cookie("rola")
     if rola == 'student':
         redirect(url('student_home'))
     elif rola == 'podjetje':
         redirect(url('podjetje_home'))
     elif rola == 'admin':
         redirect(url('admin'))
-    else:
-        redirect(url('prijava_get'))
+        return template('prijava.html', uporabnik=None, rola=None, napaka=None)
 
 @get('/student/home', name='student_home')
 @cookie_required
