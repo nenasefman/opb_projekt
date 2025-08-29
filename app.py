@@ -98,6 +98,10 @@ def prijava():
     else:
         return template("prijava.html", uporabnik=None, rola=None, napaka="Neuspešna prijava. Napačno geslo ali uporabniško ime.")
 
+@get('/prijava')
+def prijava_get():
+    return template('prijava.html', uporabnik=None, rola=None, napaka=None)
+
 @get('/odjava')
 def odjava():
     """
@@ -567,4 +571,3 @@ def podjetje_uredi_post():
 # Zaženemo strežnik 
 if __name__ == '__main__':
     run(host='localhost', port=SERVER_PORT, reloader=RELOADER, debug=True)
-
