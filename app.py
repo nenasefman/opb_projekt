@@ -1,4 +1,5 @@
 from functools import wraps
+from bottle import redirect, HTTPResponse
 from Presentation.bottleext import *
 from Services.pripravnistva_service import PripravnistvaService
 from Services.auth_service import AuthService
@@ -233,12 +234,18 @@ def podjetje_registracija_post():
         )
         service.dodaj_podjetje(novo_podjetje)
         # Po uspešni registraciji pobrišemo piškotke in preusmerimo na prijavo
-        response.delete_cookie("reg_username")
-        response.delete_cookie("reg_role")
-        redirect(url('prijava_get'))
+    
+    except HTTPResponse as r:   # to pusti redirectu da gre naprej
+        raise r
     except Exception as e:
+        import traceback
+        traceback.print_exc()   # izpiše cel stacktrace v konzolo
         return template('podjetje_registracija.html', napaka=f"Napaka pri registraciji: {e}", 
                         username=username, ime=ime, kontakt_mail=kontakt_mail, sedez=sedez)
+    
+    response.delete_cookie("reg_username")
+    response.delete_cookie("reg_role")
+    return redirect(url('prijava_get'))
 
 # ------------------------------- PROFIL ŠTUDENTA ------------------------------
 
