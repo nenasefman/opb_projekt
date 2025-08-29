@@ -27,7 +27,7 @@ def cookie_required(f):
         return template("prijava.html", uporabnik=None, rola=None, napaka="Potrebna je prijava!")
     return decorated
 
-@route('/', method=['GET', 'POST'])
+@get('/', method=['GET','POST'])
 @cookie_required
 def index():
     rola = request.get_cookie("rola")
@@ -40,7 +40,7 @@ def index():
         redirect(url('admin'))
     else:
         redirect(url('prijava_get'))
-        
+
 @get('/student/home', name='student_home')
 @cookie_required
 def student_home():
@@ -54,7 +54,7 @@ def student_home():
     # Pridobimo seznam pripravništev
     pripravnistva = service.dobi_vsa_pripravnistva_dto()
     
-    return template('student_home.html', pripravnistva=pripravnistva, username=username)
+    return template('student_home.html', pripravnistva=pripravnistva, username=username, napaka=None)
 
 @get('/podjetje/home', name='podjetje_home')
 @cookie_required
@@ -115,12 +115,10 @@ def odjava():
 
 # ------------------------------- REGISTRACIJA ------------------------------
 
-
 # Prikaz obrazca za registracijo
 @get('/registracija', name='registracija')
 def registracija_get():
     return template('registracija.html', napaka=None, username="", role="student")
-
 
 @post('/registracija')
 def registracija_post():
@@ -158,7 +156,6 @@ def registracija_post():
     elif role == 'admin':
         redirect(url('admin_registracija'))  
 
-
 # Prikaz obrazca za študenta
 @get('/student_registracija', name='student_registracija')
 def student_registracija_get():
@@ -170,7 +167,6 @@ def student_registracija_get():
     
     return template('student_registracija.html', napaka=None, username=None, 
                     ime="", priimek="", kontakt_tel="", povprecna_ocena="", univerza="")
-
 
 @post('/student_registracija')
 def student_registracija_post():
@@ -277,72 +273,71 @@ def podjetje_registracija_post():
     return redirect(url('prijava_get'))
 
 
-# ------------------------------- PROFIL ŠTUDENTA ------------------------------
+# # ------------------------------- PROFIL ŠTUDENTA ------------------------------
 
 
-@get('/student/profil')
-@cookie_required
-def student_profil():
-    username = request.get_cookie("uporabnik")
-    rola = request.get_cookie("rola")
+# @get('/student/profil')
+# @cookie_required
+# def student_profil():
+#     username = request.get_cookie("uporabnik")
+#     rola = request.get_cookie("rola")
 
-    if rola != "student":
-        redirect(url('index'))
+#     if rola != "student":
+#         redirect(url('index'))
 
-    # Pridobimo podatke o študentu
-    student = service.dobi_studenta(username)
-    if not student:
-        return template('napaka.html', napaka="Profil študenta ne obstaja.")
+#     # Pridobimo podatke o študentu
+#     student = service.dobi_studenta(username)
+#     if not student:
+#         return template('napaka.html', napaka="Profil študenta ne obstaja.")
 
-    return template('student_profil.html', student=student)
+#     return template('student_profil.html', student=student)
+
+# @get('/student/profil/uredi')
+# @cookie_required
+# def student_uredi_get():
+#     username = request.get_cookie("uporabnik")
+#     rola = request.get_cookie("rola")
+
+#     if rola != "student":
+#         redirect(url('index'))
+
+#     student = service.dobi_studenta(username)
+#     if not student:
+#         redirect(url('student_profil'))
+
+#     return template('student_uredi.html', student=student, napaka=None)
 
 
-@get('/student/profil/uredi')
-@cookie_required
-def student_uredi_get():
-    username = request.get_cookie("uporabnik")
-    rola = request.get_cookie("rola")
+# @post('/student/profil/uredi')
+# @cookie_required
+# def student_uredi_post():
+#     username = request.get_cookie("uporabnik")
+#     rola = request.get_cookie("rola")
 
-    if rola != "student":
-        redirect(url('index'))
+#     if rola != "student":
+#         redirect(url('index'))
 
-    student = service.dobi_studenta(username)
-    if not student:
-        redirect(url('student_profil'))
+#     # Podatki iz obrazca
+#     ime = request.forms.get('ime')
+#     priimek = request.forms.get('priimek')
+#     kontakt = request.forms.get('kontakt')
+#     povprecna_ocena = request.forms.get('povprecna_ocena')
+#     univerza = request.forms.get('univerza')
 
-    return template('student_uredi.html', student=student, napaka=None)
-
-
-@post('/student/profil/uredi')
-@cookie_required
-def student_uredi_post():
-    username = request.get_cookie("uporabnik")
-    rola = request.get_cookie("rola")
-
-    if rola != "student":
-        redirect(url('index'))
-
-    # Podatki iz obrazca
-    ime = request.forms.get('ime')
-    priimek = request.forms.get('priimek')
-    kontakt = request.forms.get('kontakt')
-    povprecna_ocena = request.forms.get('povprecna_ocena')
-    univerza = request.forms.get('univerza')
-
-    try:
-        # Posodobimo objekt
-        student = Student(
-            username=username,
-            ime=ime,
-            priimek=priimek,
-            kontakt_tel=int(kontakt) if kontakt else 0,
-            povprecna_ocena=float(povprecna_ocena) if povprecna_ocena else 0.0,
-            univerza=univerza
-        )
-        service.posodobi_studenta(student)
-        redirect(url('student_profil'))
-    except Exception as e:
-        return template('student_uredi.html', student=student, napaka=f"Napaka: {e}")
+#     try:
+#         # Posodobimo objekt
+#         student = Student(
+#             username=username,
+#             ime=ime,
+#             priimek=priimek,
+#             kontakt_tel=int(kontakt) if kontakt else 0,
+#             povprecna_ocena=float(povprecna_ocena) if povprecna_ocena else 0.0,
+#             univerza=univerza
+#         )
+#         service.posodobi_studenta(student)
+#         redirect(url('student_profil'))
+#     except Exception as e:
+#         return template('student_uredi.html', student=student, napaka=f"Napaka: {e}")
 
 
 # # ------------------------------- PROFIL PODJETJA ------------------------------

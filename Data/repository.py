@@ -322,7 +322,7 @@ class Repo:
                    prij.datum_prijave
             FROM prijava prij
             JOIN student stud ON prij.student = stud.username
-            JOIN pripravnistvo pripr ON prij.pripravnistvo = pripr.id
+            JOIN pripravnistvo pripr ON prij.pripravnistvo_id = pripr.id
             JOIN podjetje pod ON pripr.podjetje = pod.username
             WHERE prij.student = %s
             ORDER BY prij.datum_prijave DESC
@@ -349,7 +349,7 @@ class Repo:
                    prij.datum_prijave
             FROM prijava prij
             JOIN student stud ON prij.student = stud.username
-            JOIN pripravnistvo pripr ON prij.pripravnistvo = pripr.id
+            JOIN pripravnistvo pripr ON prij.pripravnistvo_id = pripr.id
             JOIN podjetje pod ON pripr.podjetje = pod.username
             WHERE prij.pripravnistvo = %s
             ORDER BY prij.datum_prijave DESC
@@ -361,7 +361,7 @@ class Repo:
         self.cur.execute("""
             SELECT prij.id, prij.status, prij.datum_prijave, prij.student, prij.pripravnistvo
             FROM prijava prij
-            JOIN pripravnistvo pripr ON prij.pripravnistvo = pripr.id
+            JOIN pripravnistvo pripr ON prij.pripravnistvo_id = pripr.id
             WHERE pripr.podjetje = %s
             ORDER BY prij.datum_prijave DESC
         """, (username,))
@@ -377,7 +377,7 @@ class Repo:
                    prij.datum_prijave
             FROM prijava prij
             JOIN student stud ON prij.student = stud.username
-            JOIN pripravnistvo pripr ON prij.pripravnistvo = pripr.id
+            JOIN pripravnistvo pripr ON prij.pripravnistvo_id = pripr.id
             JOIN podjetje pod ON pripr.podjetje = pod.username
             WHERE pod.username = %s
             ORDER BY prij.datum_prijave DESC

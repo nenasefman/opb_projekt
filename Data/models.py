@@ -84,7 +84,7 @@ class PripravnistvoDto:
     drzava: str = field(default="")
     kraj: str = field(default="")
     stevilo_mest: int = field(default=1)  # število prostih mest
-    podjetje: int = field(default=0)   # join na podjetje (ime podjetja)
+    podjetje: str = field(default=0)   # join na podjetje (ime podjetja)
 
 # -----------------------------
 # Prijave na pripravništva
