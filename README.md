@@ -26,10 +26,6 @@ S prijavo v aplikacijo lahko:
 
 ---
 
-## Tehnične podrobnosti
-...
-
 ## ER diagram
-<img width="2369" height="880" alt="Blank diagram" src="https://github.com/user-attachments/assets/23f6adc2-66e9-4d40-8731-e693cb56a6dc" />
-
+<img width="2409" height="920" alt="Blank diagram-2" src="https://github.com/user-attachments/assets/1d0dbc52-7ec1-493f-8303-eaad710771f8" />
 
