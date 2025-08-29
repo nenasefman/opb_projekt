@@ -28,7 +28,7 @@ class Repo:
     def dobi_uporabnika(self, username: str) -> Uporabnik:
         self.cur.execute("""
             SELECT username, role, password_hash, last_login
-            FROM uporabniki
+            FROM uporabnik
             WHERE username = %s
         """, (username,))
         u = self.cur.fetchone()
@@ -37,18 +37,21 @@ class Repo:
     def dodaj_uporabnika(self, uporabnik: Uporabnik):
         try:
             self.cur.execute("""
-                INSERT INTO uporabniki(username, role, password_hash, last_login)
+                INSERT INTO uporabnik(username, role, password_hash, last_login)
                 VALUES (%s, %s, %s, %s)
             """, (uporabnik.username, uporabnik.role, uporabnik.password_hash, uporabnik.last_login))
             self.conn.commit()
-        # preverimo, če uporabnik že obstaja
         except psycopg2.IntegrityError:
             self.conn.rollback()
             raise ValueError("Uporabnik s tem uporabniškim imenom že obstaja.")
+        except Exception as e:
+            self.conn.rollback()
+            print(f"Napaka pri dodajanju uporabnika: {e}")
+            raise e
 
     def posodobi_uporabnika(self, uporabnik: Uporabnik):
         self.cur.execute("""
-            UPDATE uporabniki
+            UPDATE uporabnik
             SET last_login = %s
             WHERE username = %s
         """, (uporabnik.last_login, uporabnik.username))
@@ -57,7 +60,7 @@ class Repo:
     # ----------------- Študenti ----------------
     def dodaj_studenta(self, student: Student):
         # Preverimo, ali obstaja uporabnik
-        self.cur.execute("SELECT username FROM uporabniki WHERE username = %s", (student.username,))
+        self.cur.execute("SELECT username FROM uporabnik WHERE username = %s", (student.username,))
         if not self.cur.fetchone():
             raise ValueError("Uporabnik s tem uporabniškim imenom ne obstaja, ne moremo dodati študenta.")
 
@@ -127,7 +130,7 @@ class Repo:
     # ----------------- Podjetja ----------------
     def dodaj_podjetje(self, podjetje: Podjetje):
         # Preverimo, ali obstaja uporabnik
-        self.cur.execute("SELECT username FROM uporabniki WHERE username = %s", (podjetje.username,))
+        self.cur.execute("SELECT username FROM uporabnik WHERE username = %s", (podjetje.username,))
         if not self.cur.fetchone():
             raise ValueError("Uporabnik s tem uporabniškim imenom ne obstaja, ne moremo dodati podjetja.")
 

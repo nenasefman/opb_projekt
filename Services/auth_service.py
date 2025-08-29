@@ -14,11 +14,8 @@ class AuthService:
 
     def obstaja_uporabnik(self, uporabnik: str) -> bool:
         '''Preveri, če uporabnik obstaja v bazi.'''
-        try:
-            user = self.repo.dobi_uporabnika(uporabnik)
-            return True
-        except:
-            return False
+        user = self.repo.dobi_uporabnika(uporabnik)
+        return user is not None
         
 
     def dodaj_uporabnika(self, uporabnik: str, rola: str, geslo: str) -> UporabnikDto:

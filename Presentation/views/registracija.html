@@ -31,6 +31,9 @@
         .form-label {
             font-weight: 500;
         }
+        .alert {
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
@@ -38,10 +41,17 @@
     <div class="register-container">
         <h2 class="mb-4 text-center">Registracija</h2>
 
+        <!-- Prikaz napake, če obstaja -->
+        % if napaka:
+            <div class="alert alert-danger" role="alert">
+                {{ napaka }}
+            </div>
+        % end
+
         <form action="/registracija" method="post">
             <div class="mb-3">
                 <label for="username" class="form-label">Uporabniško ime</label>
-                <input type="text" id="username" name="username" class="form-control" required>
+                <input type="text" id="username" name="username" class="form-control" value="{{username if username else ''}}" required>
             </div>
 
             <div class="mb-3">
@@ -57,9 +67,9 @@
             <div class="mb-3">
                 <label for="role" class="form-label">Vloga</label>
                 <select id="role" name="role" class="form-select" required>
-                    <option value="student">Študent</option>
-                    <option value="podjetje">Podjetje</option>
-                    <option value="admin">Admin</option>
+                    <option value="student" % if role == 'student': % selected % end %>Študent</option>
+                    <option value="podjetje" % if role == 'podjetje': % selected % end %>Podjetje</option>
+                    <option value="admin" % if role == 'admin': % selected % end %>Admin</option>
                 </select>
             </div>
 

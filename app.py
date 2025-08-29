@@ -1,4 +1,5 @@
 from functools import wraps
+from bottle import redirect, HTTPResponse
 from Presentation.bottleext import *
 from Services.pripravnistva_service import PripravnistvaService
 from Services.auth_service import AuthService
@@ -40,7 +41,7 @@ def index():
     else:
         redirect(url('prijava_get'))
 
-@get('/student/home')
+@get('/student/home', name='student_home')
 @cookie_required
 def student_home():
     '''Domača stran za študente, kjer vidijo seznam pripravništev'''        
@@ -55,7 +56,7 @@ def student_home():
     
     return template('student_home.html', pripravnistva=pripravnistva, username=username)
 
-@get('/podjetje/home')
+@get('/podjetje/home', name='podjetje_home')
 @cookie_required
 def podjetje_home():
     '''Domača stran za podjetja, kjer vidijo prijave na svoja pripravništva'''
@@ -98,11 +99,11 @@ def prijava():
     else:
         return template("prijava.html", uporabnik=None, rola=None, napaka="Neuspešna prijava. Napačno geslo ali uporabniško ime.")
 
-@get('/prijava')
+@get('/prijava', name='prijava_get')
 def prijava_get():
     return template('prijava.html', uporabnik=None, rola=None, napaka=None)
 
-@get('/odjava')
+@get('/odjava', name='odjava')
 def odjava():
     """
     Odjavi uporabnika iz aplikacije. Pobriše piškotke o uporabniku in njegovi roli.
@@ -115,9 +116,9 @@ def odjava():
 # ------------------------------- REGISTRACIJA ------------------------------
 
 # Prikaz obrazca za registracijo
-@get('/registracija')
+@get('/registracija', name='registracija')
 def registracija_get():
-    return template('registracija.html', napaka=None)
+    return template('registracija.html', napaka=None, username="", role="student")
 
 @post('/registracija')
 def registracija_post():
@@ -128,14 +129,20 @@ def registracija_post():
 
     # Validacija gesla
     if password != confirm_password:
-        return template('registracija.html', napaka="Gesli se ne ujemata!")
+        return template('registracija.html', napaka="Gesli se ne ujemata!", username = username, role=role)
 
     # Preverimo, ali uporabnik že obstaja
     if auth.obstaja_uporabnik(username):
-        return template('registracija.html', napaka="Uporabnik s tem imenom že obstaja!")
+        return template('registracija.html', napaka="Uporabnik s tem imenom že obstaja!", username = username, role=role)
 
     # Ustvarimo uporabnika v bazi (tabela uporabnik)
-    auth.dodaj_uporabnika(username, password, role)
+    try:
+        auth.dodaj_uporabnika(username, role, password)
+    except ValueError as ve:
+        return template('registracija.html', napaka=str(ve))
+    except Exception as e:
+        return template('registracija.html', napaka=f"Napaka pri registraciji: {e}")
+
 
     # Shranimo username in role v piškotek, da ga uporabimo v naslednjem koraku
     response.set_cookie("reg_username", username)
@@ -148,10 +155,9 @@ def registracija_post():
         redirect(url('podjetje_registracija'))
     elif role == 'admin':
         redirect(url('admin_registracija'))  
-        redirect(url('registracija'))  # fallback
 
 # Prikaz obrazca za študenta
-@get('/student_registracija')
+@get('/student_registracija', name='student_registracija')
 def student_registracija_get():
     username = request.get_cookie("reg_username")
     if not username:
@@ -187,7 +193,8 @@ def student_registracija_post():
     except Exception as e:
         return template('student_registracija.html', username=username, napaka=f"Napaka pri registraciji: {e}")
 
-@get('/podjetje_registracija')
+# Prikaz obrazca za podjetje
+@get('/podjetje_registracija', name='podjetje_registracija')
 def podjetje_registracija_get():
     # Preverimo, če imamo username in role v piškotku
     username = request.get_cookie("reg_username")
@@ -196,7 +203,7 @@ def podjetje_registracija_get():
     if not username or role != "podjetje":
         redirect(url('registracija'))  # fallback na osnovno registracijo
 
-    return template('podjetje_registracija.html', napaka=None, username=username)
+    return template('podjetje_registracija.html', napaka=None, username=None, ime="", kontakt_mail="", sedez="")
 
 @post('/podjetje_registracija')
 def podjetje_registracija_post():
@@ -214,7 +221,8 @@ def podjetje_registracija_post():
 
     # Preverimo, če podjetje s tem username že obstaja
     if service.dobi_podjetje(username):
-        return template('podjetje_registracija.html', napaka="Podjetje s tem uporabniškim imenom že obstaja!", username=username)
+        return template('podjetje_registracija.html', napaka="Podjetje s tem uporabniškim imenom že obstaja!", 
+                        username=username, ime=ime, kontakt_mail=kontakt_mail, sedez=sedez)
 
     # Ustvarimo nov objekt Podjetje in ga dodamo v bazo
     try:
@@ -226,11 +234,18 @@ def podjetje_registracija_post():
         )
         service.dodaj_podjetje(novo_podjetje)
         # Po uspešni registraciji pobrišemo piškotke in preusmerimo na prijavo
-        response.delete_cookie("reg_username")
-        response.delete_cookie("reg_role")
-        redirect(url('prijava_get'))
+    
+    except HTTPResponse as r:   # to pusti redirectu da gre naprej
+        raise r
     except Exception as e:
-        return template('podjetje_registracija.html', napaka=f"Napaka pri registraciji: {e}", username=username)
+        import traceback
+        traceback.print_exc()   # izpiše cel stacktrace v konzolo
+        return template('podjetje_registracija.html', napaka=f"Napaka pri registraciji: {e}", 
+                        username=username, ime=ime, kontakt_mail=kontakt_mail, sedez=sedez)
+    
+    response.delete_cookie("reg_username")
+    response.delete_cookie("reg_role")
+    return redirect(url('prijava_get'))
 
 # ------------------------------- PROFIL ŠTUDENTA ------------------------------
 
