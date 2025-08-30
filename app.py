@@ -449,7 +449,7 @@ def pripravnistvo_dodaj_get():
     return template('novo_pripravnistvo.html', napaka=None)
 
 
-@post('/pripravnistvo/dodaj')
+@post('/pripravnistvo/dodaj', name='pripravnistvo_dodaj_get')
 @cookie_required
 def pripravnistvo_dodaj_post():
    username = request.get_cookie("uporabnik")
@@ -458,7 +458,6 @@ def pripravnistvo_dodaj_post():
        redirect(url('index'))
    
    podjetje = service.dobi_podjetje(username)
-   #podjetje = podjetje_list[0] if podjetje_list else None
 
    if not podjetje:
        return template('novo_pripravnistvo.html', napaka="Podjetje ni najdeno. Napaka pri dodajanju pripravništva.")
@@ -467,13 +466,14 @@ def pripravnistvo_dodaj_post():
        form = fix_form_encoding(request.forms)
        new_pripravnistvo = Pripravnistvo(
            id=None,
+           podjetje_id=form.get('podjetje.username'),
            placilo=float(form.get('placilo')),
            trajanje=form.get('trajanje'),
            kraj=form.get('kraj'),
            drzava=form.get('drzava'),
            delovno_mesto=form.get('delovno_mesto'),
-           podjetje_id=podjetje.id,
-           opis=form.get('opis_dela')
+           opis_dela=form.get('opis_dela'),
+           stevilo_mest=form.get('stevilo_mest')
        )
        service.dodaj_pripravnistvo(new_pripravnistvo)
        redirect(url('pripravnistva_list'))
@@ -481,74 +481,74 @@ def pripravnistvo_dodaj_post():
        return template('novo_pripravnistvo.html', napaka=f"Napaka pri dodajanju pripravništva: {e}")
 
 
-# Urejanje pripravništva
-@get('/pripravnistvo/uredi/<id:int>')
-@cookie_required
-def pripravnistvo_uredi_get(id):
-   username = request.get_cookie("uporabnik")
-   rola = request.get_cookie("rola")
-   if rola not in ['admin', 'podjetje']:
-       redirect(url('index'))
+# # Urejanje pripravništva
+# @get('/pripravnistvo/uredi/<id:int>')
+# @cookie_required
+# def pripravnistvo_uredi_get(id):
+#    username = request.get_cookie("uporabnik")
+#    rola = request.get_cookie("rola")
+#    if rola not in ['admin', 'podjetje']:
+#        redirect(url('index'))
    
-   pripravnistvo = service.dobi_pripravnistvo(id)
-   if not pripravnistvo:
-       redirect(url('pripravnistva_list'))
+#    pripravnistvo = service.dobi_pripravnistvo(id)
+#    if not pripravnistvo:
+#        redirect(url('pripravnistva_list'))
 
-   # Preverimo, ali je podjetje lastnik pripravništva (če ni admin)
-   if rola == 'podjetje':
-       podjetje_list = service.dobi_podjetje(username)
-       podjetje = podjetje_list[0] if podjetje_list else None
-       if not podjetje or pripravnistvo.podjetje_id != podjetje.id:
-           redirect(url('index')) # Ni dovoljenja za urejanje
+#    # Preverimo, ali je podjetje lastnik pripravništva (če ni admin)
+#    if rola == 'podjetje':
+#        podjetje_list = service.dobi_podjetje(username)
+#        podjetje = podjetje_list[0] if podjetje_list else None
+#        if not podjetje or pripravnistvo.podjetje_id != podjetje.id:
+#            redirect(url('index')) # Ni dovoljenja za urejanje
 
-   podrocja_dto = service.dobi_vsa_podrocja_dto()
-   return template('pripravnistvo_uredi.html', pripravnistvo=pripravnistvo, podrocja=podrocja_dto, napaka=None)
+#    podrocja_dto = service.dobi_vsa_podrocja_dto()
+#    return template('pripravnistvo_uredi.html', pripravnistvo=pripravnistvo, podrocja=podrocja_dto, napaka=None)
 
-@post('/pripravnistvo/uredi/<id:int>')
-@cookie_required
-def pripravnistvo_uredi_post(id):
-   username = request.get_cookie("uporabnik")
-   rola = request.get_cookie("rola")
-   if rola not in ['admin', 'podjetje']:
-       redirect(url('index'))
+# @post('/pripravnistvo/uredi/<id:int>')
+# @cookie_required
+# def pripravnistvo_uredi_post(id):
+#    username = request.get_cookie("uporabnik")
+#    rola = request.get_cookie("rola")
+#    if rola not in ['admin', 'podjetje']:
+#        redirect(url('index'))
 
-   pripravnistvo = service.dobi_pripravnistvo(id)
-   if not pripravnistvo:
-       redirect(url('pripravnistva_list'))
+#    pripravnistvo = service.dobi_pripravnistvo(id)
+#    if not pripravnistvo:
+#        redirect(url('pripravnistva_list'))
    
-   if rola == 'podjetje':
-       podjetje_list = service.dobi_podjetje(username)
-       podjetje = podjetje_list[0] if podjetje_list else None
-       if not podjetje or pripravnistvo.podjetje_id != podjetje.id:
-           redirect(url('index'))
+#    if rola == 'podjetje':
+#        podjetje_list = service.dobi_podjetje(username)
+#        podjetje = podjetje_list[0] if podjetje_list else None
+#        if not podjetje or pripravnistvo.podjetje_id != podjetje.id:
+#            redirect(url('index'))
 
-   try:
-       pripravnistvo.placilo = float(request.forms.get('placilo'))
-       pripravnistvo.trajanje = request.forms.get('trajanje')
-       pripravnistvo.kraj = request.forms.get('kraj')
-       pripravnistvo.drzava = request.forms.get('drzava')
-       pripravnistvo.delovno_mesto = request.forms.get('delovno_mesto')
-       pripravnistvo.podrocje_id = int(request.forms.get('podrocje_id'))
+#    try:
+#        pripravnistvo.placilo = float(request.forms.get('placilo'))
+#        pripravnistvo.trajanje = request.forms.get('trajanje')
+#        pripravnistvo.kraj = request.forms.get('kraj')
+#        pripravnistvo.drzava = request.forms.get('drzava')
+#        pripravnistvo.delovno_mesto = request.forms.get('delovno_mesto')
+#        pripravnistvo.podrocje_id = int(request.forms.get('podrocje_id'))
        
-       service.posodobi_pripravnistvo(pripravnistvo)
-       redirect(url('pripravnistvo_detail', id=id))
-   except Exception as e:
-       podrocja_dto = service.dobi_vsa_podrocja_dto()
-       return template('pripravnistvo_uredi.html', pripravnistvo=pripravnistvo, podrocja=podrocja_dto, napaka=f"Napaka pri posodabljanju: {e}")
+#        service.posodobi_pripravnistvo(pripravnistvo)
+#        redirect(url('pripravnistvo_detail', id=id))
+#    except Exception as e:
+#        podrocja_dto = service.dobi_vsa_podrocja_dto()
+#        return template('pripravnistvo_uredi.html', pripravnistvo=pripravnistvo, podrocja=podrocja_dto, napaka=f"Napaka pri posodabljanju: {e}")
 
-@get('/pripravnistvo/izbrisi/<id:int>')
-@cookie_required
-def pripravnistvo_izbrisi(id):
-   rola = request.get_cookie("rola")
-   if rola not in ['admin', 'podjetje']:
-       redirect(url('index'))
+# @get('/pripravnistvo/izbrisi/<id:int>')
+# @cookie_required
+# def pripravnistvo_izbrisi(id):
+#    rola = request.get_cookie("rola")
+#    if rola not in ['admin', 'podjetje']:
+#        redirect(url('index'))
    
-   try:
-       service.izbrisi_pripravnistvo(id)
-       redirect(url('pripravnistva_list'))
-   except Exception as e:
-       # Lahko prikažete napako na strani s pripravništvi ali specifično obvestilo
-       return "Napaka pri brisanju pripravništva."
+#    try:
+#        service.izbrisi_pripravnistvo(id)
+#        redirect(url('pripravnistva_list'))
+#    except Exception as e:
+#        # Lahko prikažete napako na strani s pripravništvi ali specifično obvestilo
+#        return "Napaka pri brisanju pripravništva."
 
 
 # ---------------------------- PRIJAVE NA PRIPRAVNIŠTVA ---------------------------
