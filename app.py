@@ -3,7 +3,7 @@ from bottle import redirect, HTTPResponse, request, response, template, get, pos
 from Presentation.bottleext import *
 from Services.pripravnistva_service import PripravnistvaService
 from Services.auth_service import AuthService
-from Data.models import Student, Podjetje, Prijava
+from Data.models import Student, Podjetje, Prijava, Pripravnistvo
 import os
 
 service = PripravnistvaService()
@@ -464,15 +464,16 @@ def pripravnistvo_dodaj_post():
        return template('novo_pripravnistvo.html', napaka="Podjetje ni najdeno. Napaka pri dodajanju pripravništva.")
 
    try:
+       form = fix_form_encoding(request.forms)
        new_pripravnistvo = Pripravnistvo(
            id=None,
-           placilo=float(request.forms.get('placilo')),
-           trajanje=request.forms.get('trajanje'),
-           kraj=request.forms.get('kraj'),
-           drzava=request.forms.get('drzava'),
-           delovno_mesto=request.forms.get('delovno_mesto'),
+           placilo=float(form.get('placilo')),
+           trajanje=form.get('trajanje'),
+           kraj=form.get('kraj'),
+           drzava=form.get('drzava'),
+           delovno_mesto=form.get('delovno_mesto'),
            podjetje_id=podjetje.id,
-           opis=request.forms.get('opis_dela')
+           opis=form.get('opis_dela')
        )
        service.dodaj_pripravnistvo(new_pripravnistvo)
        redirect(url('pripravnistva_list'))
