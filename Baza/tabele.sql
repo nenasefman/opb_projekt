@@ -15,7 +15,7 @@ CREATE TABLE Student (
     username TEXT PRIMARY KEY,
 	ime TEXT NOT NULL,
     priimek TEXT NOT NULL,
-    kontakt_tel INTEGER NOT NULL,
+    kontakt_tel TEXT NOT NULL,
 	povprecna_ocena FLOAT CHECK (povprecna_ocena >= 0 AND povprecna_ocena <= 10),
     univerza TEXT NOT NULL,
 	FOREIGN KEY (username) REFERENCES Uporabnik(username));
@@ -37,6 +37,3 @@ CREATE TABLE Prijava (
     datum_prijave DATE NOT NULL DEFAULT CURRENT_DATE,
     student TEXT REFERENCES Student(username) ON DELETE CASCADE,
     pripravnistvo_id INT REFERENCES Pripravnistvo(id) ON DELETE CASCADE);
-
--- Sprememba tipa stolpca kontakt_tel iz INTEGER v TEXT
-ALTER TABLE Student ALTER COLUMN kontakt_tel TYPE TEXT USING kontakt_tel::TEXT;
