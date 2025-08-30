@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Uredi profil podjetja</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #fff4e6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .card { border: 1px solid #ffcc99; box-shadow: 0 2px 10px rgba(255, 123, 0, 0.1); }
+        .text-orange-custom { color: #ff7b00; }
+        .btn-custom-primary { background-color: #ff7b00; border: none; }
+        .btn-custom-primary:hover { background-color: #e66a00; }
+        .btn-custom-secondary { background-color: #ffa64d; border: none; }
+        .btn-custom-secondary:hover { background-color: #ff8c1a; }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto py-10">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-3xl font-extrabold text-orange-custom">Uredi profil podjetja</h2>
+            <a href="/podjetje/profil" class="btn-custom-secondary text-white px-4 py-2 rounded-md">Nazaj na profil</a>
+        </div>
+
+        % if napaka:
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md relative mb-4" role="alert">
+                <strong class="font-bold">Napaka!</strong>
+                <span class="block sm:inline">{{ napaka }}</span>
+            </div>
+        % end
+
+        <div class="bg-white p-8 rounded-lg shadow-md card max-w-lg mx-auto">
+            <form method="post" action="/podjetje/profil/uredi">
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-medium mb-2">Ime podjetja</label>
+                    <input type="text" name="ime" value="{{ podjetje.ime }}" required
+                           class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-medium mb-2">Sedež</label>
+                    <input type="text" name="sedez" value="{{ podjetje.sedez }}" required
+                           class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400">
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-medium mb-2">Kontaktni e-mail</label>
+                    <input type="email" name="kontakt_mail" value="{{ podjetje.kontakt_mail }}" required
+                           class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400">
+                </div>
+
+                <div class="flex justify-end space-x-3">
+                    <a href="/podjetje/profil" class="btn-custom-secondary text-white px-4 py-2 rounded-md">Prekliči</a>
+                    <button type="submit" class="btn-custom-primary text-white px-4 py-2 rounded-md">Shrani spremembe</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

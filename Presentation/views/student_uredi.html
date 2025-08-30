@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Uredi profil študenta</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #fff4e6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .card { border: 1px solid #ffcc99; box-shadow: 0 2px 10px rgba(255, 123, 0, 0.1); }
+        .text-orange-custom { color: #ff7b00; }
+        .btn-custom-primary { background-color: #ff7b00; border: none; }
+        .btn-custom-primary:hover { background-color: #e66a00; }
+        .btn-custom-secondary { background-color: #ffa64d; border: none; }
+        .btn-custom-secondary:hover { background-color: #ff8c1a; }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto py-10">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-3xl font-extrabold text-orange-custom">Uredi svoj profil</h2>
+            <a href="/student/profil" class="btn-custom-secondary text-white px-4 py-2 rounded-md">Nazaj na profil</a>
+        </div>
+
+        % if napaka:
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md relative mb-4" role="alert">
+                <strong class="font-bold">Napaka!</strong>
+                <span class="block sm:inline">{{ napaka }}</span>
+            </div>
+        % end
+
+        <div class="bg-white p-8 rounded-lg shadow-md card max-w-lg mx-auto">
+            <form method="post" action="/student/profil/uredi">
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-medium mb-2">Ime</label>
+                    <input type="text" name="ime" value="{{ student.ime }}" required
+                           class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-medium mb-2">Priimek</label>
+                    <input type="text" name="priimek" value="{{ student.priimek }}" required
+                           class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-medium mb-2">Kontaktna številka</label>
+                    <input type="text" name="kontakt_tel" value="{{ student.kontakt_tel }}"
+                           class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-medium mb-2">Povprečna ocena</label>
+                    <input type="number" step="0.1" min="1" max="10" name="povprecna_ocena" value="{{ student.povprecna_ocena }}"
+                           class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400">
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-medium mb-2">Univerza</label>
+                    <input type="text" name="univerza" value="{{ student.univerza }}"
+                           class="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400">
+                </div>
+
+                <div class="flex justify-end space-x-3">
+                    <a href="/student/profil" class="btn-custom-secondary text-white px-4 py-2 rounded-md">Prekliči</a>
+                    <button type="submit" class="btn-custom-primary text-white px-4 py-2 rounded-md">Shrani spremembe</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
