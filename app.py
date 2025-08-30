@@ -279,129 +279,117 @@ def podjetje_registracija_post():
 
 # # ------------------------------- PROFIL ŠTUDENTA ------------------------------
 
+@get('/student/profil', name='student_profil')
+@cookie_required
+def student_profil():
+    username = request.get_cookie("uporabnik")
+    rola = request.get_cookie("rola")
+    if rola != "student":
+        redirect(url('index'))
+    # Pridobimo podatke o študentu
+    student = service.dobi_studenta_dto(username)
+    if not student:
+        return template('napaka.html', napaka="Profil študenta ne obstaja.")
+    return template('student_profil.html', student=student)
 
-# @get('/student/profil')
-# @cookie_required
-# def student_profil():
-#     username = request.get_cookie("uporabnik")
-#     rola = request.get_cookie("rola")
+@get('/student/profil/uredi')
+@cookie_required
+def student_uredi_get():
+    username = request.get_cookie("uporabnik")
+    rola = request.get_cookie("rola")
+    if rola != "student":
+        redirect(url('index'))
+    student = service.dobi_studenta(username)
+    if not student:
+        redirect(url('student_profil'))
+    return template('student_uredi.html', student=student, napaka=None)
 
-#     if rola != "student":
-#         redirect(url('index'))
-
-#     # Pridobimo podatke o študentu
-#     student = service.dobi_studenta(username)
-#     if not student:
-#         return template('napaka.html', napaka="Profil študenta ne obstaja.")
-
-#     return template('student_profil.html', student=student)
-
-# @get('/student/profil/uredi')
-# @cookie_required
-# def student_uredi_get():
-#     username = request.get_cookie("uporabnik")
-#     rola = request.get_cookie("rola")
-
-#     if rola != "student":
-#         redirect(url('index'))
-
-#     student = service.dobi_studenta(username)
-#     if not student:
-#         redirect(url('student_profil'))
-
-#     return template('student_uredi.html', student=student, napaka=None)
-
-
-# @post('/student/profil/uredi')
-# @cookie_required
-# def student_uredi_post():
-#     username = request.get_cookie("uporabnik")
-#     rola = request.get_cookie("rola")
-
-#     if rola != "student":
-#         redirect(url('index'))
-
-#     # Podatki iz obrazca
-#     ime = request.forms.get('ime')
-#     priimek = request.forms.get('priimek')
-#     kontakt = request.forms.get('kontakt')
-#     povprecna_ocena = request.forms.get('povprecna_ocena')
-#     univerza = request.forms.get('univerza')
-
-#     try:
-#         # Posodobimo objekt
-#         student = Student(
-#             username=username,
-#             ime=ime,
-#             priimek=priimek,
-#             kontakt_tel=int(kontakt) if kontakt else 0,
-#             povprecna_ocena=float(povprecna_ocena) if povprecna_ocena else 0.0,
-#             univerza=univerza
-#         )
-#         service.posodobi_studenta(student)
-#         redirect(url('student_profil'))
-#     except Exception as e:
-#         return template('student_uredi.html', student=student, napaka=f"Napaka: {e}")
-
+@post('/student/profil/uredi')
+@cookie_required
+def student_uredi_post():
+    username = request.get_cookie("uporabnik")
+    rola = request.get_cookie("rola")
+    if rola != "student":
+        redirect(url('index'))
+    # Originalni podatki študenta
+    student_og = service.dobi_studenta(username)
+    # Podatki iz obrazca
+    ime = request.forms.get('ime')
+    priimek = request.forms.get('priimek')
+    kontakt_tel = request.forms.get('kontakt_tel')
+    povprecna_ocena = request.forms.get('povprecna_ocena')
+    univerza = request.forms.get('univerza')
+    try:
+        # Posodobimo objekt
+        student = Student(
+            username=username,
+            ime=ime,
+            priimek=priimek,
+            kontakt_tel=int(kontakt_tel) if kontakt_tel else student_og.kontakt_tel,
+            povprecna_ocena=float(povprecna_ocena) if povprecna_ocena else student_og.povprecna_ocena,
+            univerza=univerza if univerza else student_og.univerza
+        )
+        service.posodobi_studenta(student)
+    except HTTPResponse as r:   # to pusti redirectu da gre naprej
+        raise r
+    except Exception as e:
+        return template('student_uredi.html', student=student, napaka=f"Napaka: {e}")
+    raise redirect(url('student_profil'))
 
 # # ------------------------------- PROFIL PODJETJA ------------------------------
 
-# @get('/podjetje/profil')
-# @cookie_required
-# def podjetje_profil():
-#     username = request.get_cookie("uporabnik")
-#     rola = request.get_cookie("rola")
+@get('/podjetje/profil', name='podjetje_profil')
+@cookie_required
+def podjetje_profil():
+    username = request.get_cookie("uporabnik")
+    rola = request.get_cookie("rola")
+    if rola != "podjetje":
+        redirect(url('index'))
+    # Pridobimo podatke o podjetju
+    podjetje = service.dobi_podjetje_dto(username)
+    if not podjetje:
+        return template('napaka.html', napaka="Profil podjetje ne obstaja.")
+    return template('podjetje_profil.html', podjetje=podjetje)
 
-#     if rola != "podjetje":
-#         redirect(url('index'))
+@get('/podjetje/profil/uredi')
+@cookie_required
+def podjetje_uredi_get():
+    username = request.get_cookie("uporabnik")
+    rola = request.get_cookie("rola")
+    if rola != "podjetje":
+        redirect(url('index'))
+    podjetje = service.dobi_podjetje(username)
+    if not podjetje:
+        redirect(url('podjetje_profil'))
+    return template('podjetje_uredi.html', podjetje=podjetje, napaka=None)
 
-#     # Pridobimo podatke o podjetju
-#     podjetje = service.dobi_podjetje(username)
-#     if not podjetje:
-#         return template('napaka.html', napaka="Profil podjetja ne obstaja.")
-
-#     return template('podjetje_profil.html', podjetje=podjetje)
-
-# @get('/podjetje/profil/uredi')
-# @cookie_required
-# def podjetje_uredi_get():
-#     username = request.get_cookie("uporabnik")
-#     rola = request.get_cookie("rola")
-
-#     if rola != "podjetje":
-#         redirect(url('index'))
-
-#     podjetje = service.dobi_podjetje(username)
-#     if not podjetje:
-#         redirect(url('podjetje_profil'))
-
-#     return template('podjetje_uredi.html', podjetje=podjetje, napaka=None)
-
-# @post('/podjetje/profil/uredi')
-# @cookie_required
-# def podjetje_uredi_post():
-#     username = request.get_cookie("uporabnik")
-#     rola = request.get_cookie("rola")
-
-#     if rola != "podjetje":
-#         redirect(url('index'))
-
-#     # Podatki iz obrazca
-#     ime = request.forms.get('ime')
-#     sedez = request.forms.get('sedez')
-#     kontakt_mail = request.forms.get('kontakt_mail')
-
-#     try:
-#         podjetje = Podjetje(
-#             username=username,
-#             ime=ime,
-#             sedez=sedez,
-#             kontakt_mail=kontakt_mail
-#         )
-#         service.posodobi_podjetje(podjetje)
-#         redirect(url('podjetje_profil'))
-#     except Exception as e:
-#         return template('podjetje_uredi.html', podjetje=podjetje, napaka=f"Napaka: {e}")
+@post('/podjetje/profil/uredi')
+@cookie_required
+def podjetje_uredi_post():
+    username = request.get_cookie("uporabnik")
+    rola = request.get_cookie("rola")
+    if rola != "podjetje":
+        redirect(url('index'))
+    # Originalni podatki podjetja
+    podjetje_og = service.dobi_podjetje(username)
+    # Podatki iz obrazca
+    ime = request.forms.get('ime')
+    sedez = request.forms.get('sedez')
+    kontakt_mail = request.forms.get('kontakt_mail')
+    try:
+        # Posodobimo objekt
+        podjetje = Podjetje(
+            username=username,
+            ime=ime,
+            sedez=sedez if sedez else podjetje_og.sedez,
+            kontakt_mail=kontakt_mail if kontakt_mail else podjetje_og.kontakt_mail
+        )
+        service.posodobi_podjetje(podjetje)
+    except HTTPResponse as r:   # to pusti redirectu da gre naprej
+        raise r
+    except Exception as e:
+        return template('podjetje_uredi.html', podjetje=podjetje, napaka=f"Napaka: {e}")
+    raise redirect(url('podjetje_profil'))
 
 # ############################### PRIPRAVNIŠTVA ##############################
 
