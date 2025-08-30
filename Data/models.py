@@ -27,7 +27,7 @@ class Student:
     username: str = field(default="")    # povezava na Uporabnik
     ime: str = field(default="")
     priimek: str = field(default="")
-    kontakt_tel: int = field(default=0) 
+    kontakt_tel: str = field(default="")
     povprecna_ocena: float = field(default=0.0)
     univerza: str = field(default="")
 
@@ -36,7 +36,7 @@ class Student:
 class StudentDto:
     ime: str = field(default="")
     priimek: str = field(default="")
-    kontakt_tel: int = field(default=0)
+    kontakt_tel: str = field(default="")
     povprecna_ocena: float = field(default=0.0)
     univerza: str = field(default="")
 
