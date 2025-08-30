@@ -37,3 +37,6 @@ CREATE TABLE Prijava (
     datum_prijave DATE NOT NULL DEFAULT CURRENT_DATE,
     student TEXT REFERENCES Student(username) ON DELETE CASCADE,
     pripravnistvo_id INT REFERENCES Pripravnistvo(id) ON DELETE CASCADE);
+
+-- Sprememba tipa stolpca kontakt_tel iz INTEGER v TEXT
+ALTER TABLE Student ALTER COLUMN kontakt_tel TYPE TEXT USING kontakt_tel::TEXT;
