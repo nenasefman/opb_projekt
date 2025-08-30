@@ -3,7 +3,7 @@ from bottle import redirect, HTTPResponse, request, response, template, get, pos
 from Presentation.bottleext import *
 from Services.pripravnistva_service import PripravnistvaService
 from Services.auth_service import AuthService
-from Data.models import Student, Podjetje
+from Data.models import Student, Podjetje, Prijava
 import os
 
 service = PripravnistvaService()
@@ -536,7 +536,8 @@ def prijava_na_pripravnistvo(pripravnistvo_id):
    student = service.dobi_studenta(username)
 
    if not student:
-       return template('prijava_na_pripravnistvo.html', napaka="Študent ni najden. Prosimo, prijavite se ponovno.", rola=rola, pripravnistvo=service.dobi_pripravnistvo_dto(pripravnistvo_id))
+       return template('prijava_na_pripravnistvo.html', napaka="Študent ni najden. Prosimo, prijavite se ponovno.", 
+                       rola=rola, pripravnistvo=service.dobi_pripravnistvo_dto(pripravnistvo_id))
 
    try:
        new_prijava = Prijava(
@@ -549,7 +550,8 @@ def prijava_na_pripravnistvo(pripravnistvo_id):
        service.dodaj_prijavo(new_prijava) # Predpostavimo metodo za dodajanje prijave
        redirect(url('student_profil')) # Preusmerimo na profil študenta, da vidi prijave
    except Exception as e:
-       return template('prijava_na_pripravnistvo.html', napaka=f"Napaka pri prijavi: {e}", rola=rola, pripravnistvo=service.dobi_pripravnistvo_dto(pripravnistvo_id))
+       return template('prijava_na_pripravnistvo.html', napaka=f"Napaka pri prijavi: {e}", 
+                       rola=rola, pripravnistvo=service.dobi_pripravnistvo_dto(pripravnistvo_id))
 
 
 # @get('/podjetje/prijave')
@@ -611,22 +613,8 @@ def student_prijave():
     return template('moje_prijave.html', prijave=prijave, username=username, rola=rola, napaka=None)
 
 
-# ############################### ADMINISTRATOR ##############################
-# #
-# #@get('/admin')
-# #@cookie_required
-# #def urejanje_admin_panel():
-# #    username = request.get_cookie("uporabnik")
-# #    rola = request.get_cookie("rola")
-# #    
-# #    if rola != 'admin':
-# #        redirect(url('index'))
-# #    
-# #    # Tukaj lahko prikažemo splošen admin panel z različnimi možnostmi
-# #    # npr. urejanje uporabnikov, pregled vseh podatkov, statistika itd.
-# #    return template('admin_panel.html', rola=rola)
-# #
-# #
-# Zaženemo strežnik 
+
+# ------------------------------- ZAGON ------------------------------
+
 if __name__ == '__main__':
     run(host='localhost', port=SERVER_PORT, reloader=RELOADER, debug=True)
