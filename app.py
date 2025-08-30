@@ -52,7 +52,7 @@ def student_home():
     
     pripravnistva = service.dobi_vsa_pripravnistva_dto()
     
-    return template('student_home.html', pripravnistva=pripravnistva, username=username, napaka=None)
+    return template('student_home.html', pripravnistva=pripravnistva, username=username, rola=rola, napaka=None)
 
 
 @get('/podjetje/home', name='podjetje_home')
@@ -523,34 +523,33 @@ def podjetje_uredi_post():
 # #        return "Napaka pri brisanju pripravništva."
 # #
 # #
-# ############################## PRIJAVE ##############################
+# ---------------------------- PRIJAVE NA PRIPRAVNIŠTVA ---------------------------
 
-# @post('/pripravnistvo/<pripravnistvo_id:int>/prijava')
-# @cookie_required
-# def prijava_na_pripravnistvo(pripravnistvo_id):
-#    username = request.get_cookie("uporabnik")
-#    rola = request.get_cookie("rola")
-#    if rola != 'student':
-#        redirect(url('index'))
+@post('/pripravnistvo/<pripravnistvo_id:int>/prijava')
+@cookie_required
+def prijava_na_pripravnistvo(pripravnistvo_id):
+   username = request.get_cookie("uporabnik")
+   rola = request.get_cookie("rola")
+   if rola != 'student':
+       redirect(url('index'))
 
-#    student_list = service.dobi_studenta(username)
-#    student = student_list[0] if student_list else None
+   student = service.dobi_studenta(username)
 
-#    if not student:
-#        return template('pripravnistvo_detail.html', napaka="Študent ni najden. Prosimo, prijavite se ponovno.", rola=rola, pripravnistvo=service.dobi_pripravnistvo_dto(pripravnistvo_id))
+   if not student:
+       return template('prijava_na_pripravnistvo.html', napaka="Študent ni najden. Prosimo, prijavite se ponovno.", rola=rola, pripravnistvo=service.dobi_pripravnistvo_dto(pripravnistvo_id))
 
-#    try:
-#        new_prijava = Prijava(
-#            id=None,
-#            status="V obravnavi", # Privzeti status
-#            datum=datetime.now().date(),
-#            student_emso=student.emso,
-#            pripravnistvo_id=pripravnistvo_id
-#        )
-#        service.dodaj_prijavo(new_prijava) # Predpostavimo metodo za dodajanje prijave
-#        redirect(url('student_profil')) # Preusmerimo na profil študenta, da vidi prijave
-#    except Exception as e:
-#        return template('pripravnistvo_detail.html', napaka=f"Napaka pri prijavi: {e}", rola=rola, pripravnistvo=service.dobi_pripravnistvo_dto(pripravnistvo_id))
+   try:
+       new_prijava = Prijava(
+           id=None,
+           status="V obravnavi", # Privzeti status
+           datum=datetime.now().date(),
+           student_emso=student.username,
+           pripravnistvo_id=pripravnistvo_id
+       )
+       service.dodaj_prijavo(new_prijava) # Predpostavimo metodo za dodajanje prijave
+       redirect(url('student_profil')) # Preusmerimo na profil študenta, da vidi prijave
+   except Exception as e:
+       return template('prijava_na_pripravnistvo.html', napaka=f"Napaka pri prijavi: {e}", rola=rola, pripravnistvo=service.dobi_pripravnistvo_dto(pripravnistvo_id))
 
 
 # @get('/podjetje/prijave')
@@ -570,22 +569,46 @@ def podjetje_uredi_post():
 #    prijave_dto = service.dobi_prijave_podjetja_dto(username) # Uporabimo username, ker je podjetje identificirano z njim
 #    return template('podjetje_prijave.html', prijave=prijave_dto, rola=rola)
 
-# @post('/prijava/posodobi/<id:int>')
-# @cookie_required
-# def prijava_posodobi_status(id):
-#    username = request.get_cookie("uporabnik")
-#    rola = request.get_cookie("rola")
-#    if rola != 'podjetje':
-#        redirect(url('index'))
+@post('/prijava/posodobi/<id:int>')
+@cookie_required
+def prijava_posodobi_status(id):
+   username = request.get_cookie("uporabnik")
+   rola = request.get_cookie("rola")
+   if rola != 'podjetje':
+       redirect(url('index'))
    
-#    status = request.forms.get('status')
-#    prijava = service.dobi_prijavo_by_id(id) # Predpostavimo metodo, ki dobi prijavo po ID-ju
+   status = request.forms.get('status')
+   prijava = service.dobi_prijavo_by_id(id) # Predpostavimo metodo, ki dobi prijavo po ID-ju
    
-#    if prijava:
-#        prijava.status = status
-#        service.posodobi_prijavo(prijava)
+   if prijava:
+       prijava.status = status
+       service.posodobi_prijavo(prijava)
    
-#    redirect(url('podjetje_prijave')) # Preusmerimo nazaj na seznam prijav
+   redirect(url('podjetje_prijave')) # Preusmerimo nazaj na seznam prijav
+
+# ------------------------------- VSE PRIJAVE ŠTUDENTA ------------------------------
+
+@get('/student/prijave', name='student_prijave')
+@cookie_required
+def student_prijave():
+    username = request.get_cookie("uporabnik")
+    rola = request.get_cookie("rola")
+    
+    # Dovoli dostop samo študentom
+    if rola != 'student':
+        redirect(url('index'))
+    
+    # Poiščemo podatke o študentu
+    student = service.dobi_studenta(username)
+    
+    if not student:
+        redirect(url('index'))
+
+    # Pridobimo seznam pripravništev, na katera je prijavljen
+    prijave = service.dobi_prijave_studenta_dto(student.username)  
+    # Ta metoda mora vrniti seznam prijav z vsemi podatki o pripravništvih.
+
+    return template('moje_prijave.html', prijave=prijave, username=username, rola=rola, napaka=None)
 
 
 # ############################### ADMINISTRATOR ##############################
