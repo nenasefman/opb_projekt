@@ -1,5 +1,4 @@
 import psycopg2, psycopg2.extensions, psycopg2.extras
-psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 from Data import auth_public as auth
 import os
 from typing import List
@@ -22,6 +21,7 @@ class Repo:
             password=auth.password,
             port=DB_PORT
         )
+        self.conn.set_client_encoding('UTF8')
         self.cur = self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
     # ---------------- Uporabniki ----------------
