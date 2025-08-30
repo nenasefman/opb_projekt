@@ -12,17 +12,6 @@ auth = AuthService()
 SERVER_PORT = int(os.environ.get('BOTTLE_PORT', 8080))
 RELOADER = os.environ.get('BOTTLE_RELOADER', True)
 
-# Odpravljaneje težav z encodingom
-def fix_form_encoding(form):
-    """Popravi vse vrednosti v obrazcu, da so UTF-8."""
-    fixed = {}
-    for key, value in form.items():
-        if isinstance(value, str):
-            # Pretvorba iz latin1 -> UTF-8
-            fixed[key] = value.encode('latin1').decode('utf-8')
-        else:
-            fixed[key] = value
-    return fixed
 
 def cookie_required(f):
     """
@@ -200,12 +189,11 @@ def student_registracija_post():
         redirect(url('registracija'))
 
     # Podatki iz obrazca
-    form = fix_form_encoding(request.forms)
-    ime = form.get('ime')
-    priimek = form.get('priimek')
-    kontakt_tel = form.get('kontakt_tel')
-    povprecna_ocena = form.get('povprecna_ocena')
-    univerza = form.get('univerza')
+    ime = request.forms.get('ime')
+    priimek = request.forms.get('priimek')
+    kontakt_tel = request.forms.get('kontakt_tel')
+    povprecna_ocena = request.forms.get('povprecna_ocena')
+    univerza = request.forms.get('univerza')
 
     # Preverimo, če podjetje s tem username že obstaja
     if service.dobi_studenta(username):
@@ -263,10 +251,9 @@ def podjetje_registracija_post():
         redirect(url('registracija'))
 
     # Podatki iz obrazca
-    form = fix_form_encoding(request.forms)
-    ime = form.get('ime')
-    sedez = form.get('sedez')
-    kontakt_mail = form.get('kontakt_mail')
+    ime = request.forms.get('ime')
+    sedez = request.forms.get('sedez')
+    kontakt_mail = request.forms.get('kontakt_mail')
 
     # Preverimo, če podjetje s tem username že obstaja
     if service.dobi_podjetje(username):
@@ -335,13 +322,11 @@ def student_uredi_post():
     # Originalni podatki študenta
     student_og = service.dobi_studenta(username)
     # Podatki iz obrazca
-    form = fix_form_encoding(request.forms)
-
-    ime = form.get('ime')
-    priimek = form.get('priimek')
-    kontakt_tel = form.get('kontakt_tel')
-    povprecna_ocena = form.get('povprecna_ocena')
-    univerza = form.get('univerza')
+    ime = request.forms.get('ime')
+    priimek = request.forms.get('priimek')
+    kontakt_tel = request.forms.get('kontakt_tel')
+    povprecna_ocena = request.forms.get('povprecna_ocena')
+    univerza = request.forms.get('univerza')
     try:
         # Posodobimo objekt
         student = Student(
@@ -398,10 +383,9 @@ def podjetje_uredi_post():
     # Originalni podatki podjetja
     podjetje_og = service.dobi_podjetje(username)
     # Podatki iz obrazca
-    form = fix_form_encoding(request.forms)
-    ime = form.get('ime')
-    sedez = form.get('sedez')
-    kontakt_mail = form.get('kontakt_mail')
+    ime = request.forms.get('ime')
+    sedez = request.forms.get('sedez')
+    kontakt_mail = request.forms.get('kontakt_mail')
     try:
         # Posodobimo objekt
         podjetje = Podjetje(
@@ -458,22 +442,20 @@ def pripravnistvo_dodaj_post():
        redirect(url('index'))
    
    podjetje = service.dobi_podjetje(username)
-   #podjetje = podjetje_list[0] if podjetje_list else None
 
    if not podjetje:
        return template('novo_pripravnistvo.html', napaka="Podjetje ni najdeno. Napaka pri dodajanju pripravništva.")
 
    try:
-       form = fix_form_encoding(request.forms)
        new_pripravnistvo = Pripravnistvo(
            id=None,
-           placilo=float(form.get('placilo')),
-           trajanje=form.get('trajanje'),
-           kraj=form.get('kraj'),
-           drzava=form.get('drzava'),
-           delovno_mesto=form.get('delovno_mesto'),
-           podjetje_id=podjetje.id,
-           opis=form.get('opis_dela')
+           placilo=float(request.forms.get('placilo')),
+           trajanje=request.forms.get('trajanje'),
+           kraj=request.forms.get('kraj'),
+           drzava=request.forms.get('drzava'),
+           delovno_mesto=request.forms.get('delovno_mesto'),
+           podjetje=podjetje.username,
+           opis_dela=request.forms.get('opis_dela')
        )
        service.dodaj_pripravnistvo(new_pripravnistvo)
        redirect(url('pripravnistva_list'))
@@ -643,7 +625,7 @@ def student_prijave():
 
 
 
-# ------------------------------- POGANJANJE APPA ------------------------------
+# ------------------------------- ZAGON ------------------------------
 
 if __name__ == '__main__':
     run(host='localhost', port=SERVER_PORT, reloader=RELOADER, debug=True)
