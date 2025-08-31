@@ -406,16 +406,16 @@ class Repo:
         return [PrijavaDto.from_dict(r) for r in self.cur.fetchall()]
     
     def posodobi_status_prijave(self, prijava_id: int, status: str) -> None:
-        # try:
-        self.cur.execute("""
-            UPDATE prijava
-            SET status = %s
-            WHERE id = %s
-        """, (status, prijava_id))
-        self.conn.commit()
-        # except Exception as e:
-        #     self.conn.rollback()
-        # raise e
+        try:
+            self.cur.execute("""
+                UPDATE prijava
+                SET status = %s
+                WHERE id = %s
+            """, (status, prijava_id))
+            self.conn.commit()
+        except Exception as e:
+            self.conn.rollback()
+            raise
     
     def posodobi_prijavo(self, prijava: Prijava):
         """

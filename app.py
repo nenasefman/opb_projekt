@@ -708,17 +708,17 @@ def prijava_posodobi_status(id_prijave):
         if referer:
             return template("napaka.html", napaka="Napaka: Status ni bil izbran.")
         else:
-            redirect(url('podjetje_home'))
+            return redirect(url('podjetje_home'))
 
     service.posodobi_status_prijave(prijava_id, nov_status)
     
     # Preusmerimo nazaj na isto stran
     referer = request.headers.get('Referer')
     if referer:
-        redirect(referer)
+        return redirect(referer)
     else:
         # Če referer ni na voljo, preusmerimo na domačo stran podjetja
-        redirect(url('podjetje_home'))
+        return redirect(url('podjetje_home'))
 
 
 # ------------------------------- POGANJANJE APPA ------------------------------

@@ -6,14 +6,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background-color: #fff4e6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .card { border: 1px solid #ffcc99; box-shadow: 0 2px 10px rgba(255, 123, 0, 0.1); }
+        .card { border: 1px solid #ffcc99; box-shadow: 0 4px 12px rgba(255, 123, 0, 0.15); transition: transform 0.2s ease; }
+        .card:hover { transform: scale(1.02); }
         .text-orange-custom { color: #ff7b00; }
         .btn-custom-primary { background-color: #ff7b00; border: none; font-weight: bold; }
         .btn-custom-primary:hover { background-color: #e66a00; }
         .btn-custom-secondary { background-color: #ffa64d; border: none; font-weight: bold; }
         .btn-custom-secondary:hover { background-color: #ff8c1a; }
         .card-title { font-size: 1.875rem; font-weight: 700; color: #1f2937; text-align: center; margin-bottom: 1.5rem; }
-        .btn-group { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
     </style>
 </head>
 <body>
@@ -21,7 +21,9 @@
 
     <!-- Navigacija -->
     <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-2">
-        <h2 class="text-4xl font-extrabold text-gray-900 text-orange-custom">Prijave na pripravništvo: {{ pripravnistvo.delovno_mesto }}</h2>
+        <h2 class="text-4xl font-extrabold text-gray-900 text-orange-custom">
+            Prijave na pripravništvo: {{ pripravnistvo.delovno_mesto }}
+        </h2>
         <div class="space-x-2">
             <a href="/podjetje/home" class="btn-custom-secondary text-white px-4 py-2 rounded-md">Domov</a>
             <a href="/podjetje/profil" class="btn-custom-secondary text-white px-4 py-2 rounded-md">Nazaj na profil</a>
@@ -29,34 +31,34 @@
     </div>
 
     % if prijave:
-        <div class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             % for p in prijave:
-                <div class="bg-white p-6 rounded-lg card">
+                <div class="bg-white p-6 rounded-xl card">
                     <!-- Podatki o študentu -->
-                    <h3 class="text-xl font-semibold mb-2">Podatki o študentu</h3>
+                    <h3 class="text-xl font-semibold mb-2 text-orange-custom">Podatki o študentu</h3>
                     <p><strong>Ime in priimek:</strong> {{ p['student'].ime }} {{ p['student'].priimek }}</p>
                     <p><strong>Kontakt:</strong> {{ p['student'].kontakt_tel }}</p>
                     <p><strong>Univerza:</strong> {{ p['student'].univerza }}</p>
                     <p><strong>Povprečna ocena:</strong> {{ "{:.1f}".format(p['student'].povprecna_ocena) }}</p>
 
-                    <h3 class="text-xl font-semibold mt-4 mb-2">Podatki o prijavi</h3>
-                    <p><strong>Status:</strong> {{ p['prijava'].status }}</p>
+                    <h3 class="text-xl font-semibold mt-4 mb-2 text-orange-custom">Podatki o prijavi</h3>
                     <p><strong>Datum prijave:</strong> {{ p['prijava'].datum_prijave.strftime("%d.%m.%Y") }}</p>
-                    <p class="text-gray-600 mb-1"><strong>Trenutni status:</strong> {{ p['prijava'].status }}</p>
+                    <p class="text-gray-600 mb-2"><strong>Trenutni status:</strong> {{ p['prijava'].status }}</p>
+
                     <!-- Obrazec za posodabljanje statusa -->
                     <form action="{{ url('prijava_posodobi_status', id_prijave=p['prijava'].id) }}" method="post" class="mt-4">
-                        <label for="nov_status_{{ p['prijava'].id }}" class="block text-sm font-medium text-gray-700 mb-2">Spremeni status:</label>
-                        <select name="status" id="nov_status_{{ p['prijava'].id }}" class="status-select w-full mb-3" required>
-                            <option value="V obravnavi" % if p['prijava'].status == 'V obravnavi': selected % end>V obravnavi</option>
-                            <option value="Odobrena" % if p['prijava'].status == 'Odobrena': selected % end>Odobrena</option>
-                            <option value="Zavrnjena" % if p['prijava'].status == 'Zavrnjena': selected % end>Zavrnjena</option>
+                        <label for="nov_status_{{ p['prijava'].id }}" class="block text-sm font-medium text-gray-700 mb-1">Spremeni status:</label>
+                        <select name="nov_status" id="nov_status_{{ p['prijava'].id }}" 
+                                class="w-full px-2 py-2 text-sm border rounded mb-2" required>
+                            <option value="v obravnavi" % if p['prijava'].status == 'v obravnavi': selected % end>v obravnavi</option>
+                            <option value="odobrena" % if p['prijava'].status == 'odobrena': selected % end>odobrena</option>
+                            <option value="zavrnjena" % if p['prijava'].status == 'zavrnjena': selected % end>zavrnjena</option>
                         </select>
-                        <button type="submit" class="w-full btn-custom-primary text-white py-2 rounded-md shadow-sm">Posodobi</button>
+                        <button type="submit" 
+                                class="btn-custom-primary w-full text-white text-sm px-3 py-2 rounded shadow-sm">
+                            Posodobi
+                        </button>
                     </form>
-
-                    <div class="btn-group">
-                        <a href="/prijava/izbrisi/{{ p['prijava'].student }}/{{ pripravnistvo.id }}" class="btn-custom-primary text-white px-4 py-2 rounded-md">Izbriši prijavo</a>
-                    </div>
                 </div>
             % end
         </div>
