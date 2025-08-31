@@ -397,12 +397,7 @@ def prijava_na_pripravnistvo_get(id):
     pripravnistvo = service.dobi_pripravnistvo(id)
 
     return template(
-        'prijava_na_pripravnistvo.html',
-        napaka=None,
-        rola=rola,
-        pripravnistvo=pripravnistvo,
-        student=username
-    )
+        'prijava_na_pripravnistvo.html', napaka=None, rola=rola, pripravnistvo=pripravnistvo, student=username)
 
 
 @post('/pripravnistvo/<pripravnistvo_id:int>/prijava')

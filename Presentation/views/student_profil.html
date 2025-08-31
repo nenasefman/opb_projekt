@@ -6,7 +6,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background-color: #fff4e6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .card { border: 1px solid #ffcc99; box-shadow: 0 2px 10px rgba(255, 123, 0, 0.1); }
+        .card { border: 1px solid #ffcc99; box-shadow: 0 2px 10px rgba(255, 123, 0, 0.1); border-radius: 0.75rem; padding: 2rem; max-width: 2xl; margin: auto; transition: transform 0.2s ease; }
         .text-orange-custom { color: #ff7b00; }
         .btn-custom-primary { background-color: #ff7b00; border: none; }
         .btn-custom-primary:hover { background-color: #e66a00; }
@@ -15,33 +15,28 @@
     </style>
 </head>
 <body>
-    <div class="container mx-auto py-8">
-        <!-- Navigacija -->
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-4xl font-extrabold text-gray-900 text-orange-custom">Moj profil</h2>
-            <div class="space-x-2">
-                <a href="/student/home" class="btn-custom-secondary text-white px-4 py-2 rounded-md">Domov</a>
-                <a href="/student/prijave" class="btn-custom-secondary text-white px-4 py-2 rounded-md">Moje prijave</a>
-                <a href="/odjava" class="btn-custom-primary text-white px-4 py-2 rounded-md">Odjava</a>
-            </div>
-        </div>
-
-        <!-- Profil študenta -->
-        <div class="bg-white p-8 rounded-lg card max-w-2xl mx-auto">
-            <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">Podatki o študentu</h3>
-
-            <div class="space-y-4">
-                <p class="text-gray-700"><strong>Ime:</strong> {{ student.ime }}</p>
-                <p class="text-gray-700"><strong>Priimek:</strong> {{ student.priimek }}</p>
-                <p class="text-gray-700"><strong>Kontaktni telefon:</strong> {{ student.kontakt_tel }}</p>
-                <p class="text-gray-700"><strong>Povprečna ocena:</strong> {{ student.povprecna_ocena }}</p>
-                <p class="text-gray-700"><strong>Univerza:</strong> {{ student.univerza }}</p>
-            </div>
-
-            <div class="mt-6 text-center">
-                <a href="/student/profil/uredi" class="btn-custom-primary text-white px-6 py-2 rounded-md">Uredi profil</a>
-            </div>
+<div class="container mx-auto py-8">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-4xl font-extrabold text-gray-900 text-orange-custom">Moj profil</h2>
+        <div class="space-x-2">
+            <a href="/student/home" class="btn-custom-secondary text-white px-4 py-2 rounded-md">Domov</a>
+            <a href="/student/prijave" class="btn-custom-secondary text-white px-4 py-2 rounded-md">Moje prijave</a>
+            <a href="/odjava" class="btn-custom-primary text-white px-4 py-2 rounded-md">Odjava</a>
         </div>
     </div>
+
+    <div class="bg-white card text-gray-700 text-center">
+        <h3 class="text-2xl font-bold mb-6">Podatki o študentu</h3>
+        <p><strong>Ime:</strong> {{ student.ime }}</p>
+        <p><strong>Priimek:</strong> {{ student.priimek }}</p>
+        <p><strong>Kontaktni telefon:</strong> {{ student.kontakt_tel }}</p>
+        <p><strong>Povprečna ocena:</strong> {{ student.povprecna_ocena }}</p>
+        <p><strong>Univerza:</strong> {{ student.univerza }}</p>
+
+        <div class="mt-6">
+            <a href="/student/profil/uredi" class="btn-custom-primary text-white px-6 py-2 rounded-md">Uredi profil</a>
+        </div>
+    </div>
+</div>
 </body>
 </html>

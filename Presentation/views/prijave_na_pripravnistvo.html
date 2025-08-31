@@ -19,7 +19,6 @@
 <body>
 <div class="container mx-auto py-8 space-y-8">
 
-    <!-- Navigacija -->
     <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-2">
         <h2 class="text-4xl font-extrabold text-gray-900 text-orange-custom">
             Prijave na pripravništvo: {{ pripravnistvo.delovno_mesto }}
@@ -34,7 +33,6 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             % for p in prijave:
                 <div class="bg-white p-6 rounded-xl card">
-                    <!-- Podatki o študentu -->
                     <h3 class="text-xl font-semibold mb-2 text-orange-custom">Podatki o študentu</h3>
                     <p><strong>Ime in priimek:</strong> {{ p['student'].ime }} {{ p['student'].priimek }}</p>
                     <p><strong>Kontakt:</strong> {{ p['student'].kontakt_tel }}</p>
@@ -45,7 +43,6 @@
                     <p><strong>Datum prijave:</strong> {{ p['prijava'].datum_prijave.strftime("%d.%m.%Y") }}</p>
                     <p class="text-gray-600 mb-2"><strong>Trenutni status:</strong> {{ p['prijava'].status }}</p>
 
-                    <!-- Obrazec za posodabljanje statusa -->
                     <form action="{{ url('prijava_posodobi_status', id_prijave=p['prijava'].id) }}" method="post" class="mt-4">
                         <label for="nov_status_{{ p['prijava'].id }}" class="block text-sm font-medium text-gray-700 mb-1">Spremeni status:</label>
                         <select name="nov_status" id="nov_status_{{ p['prijava'].id }}" 
