@@ -220,7 +220,7 @@ def student_registracija_post():
             username=username,
             ime=ime,
             priimek=priimek,
-            kontakt_tel=int(kontakt_tel),
+            kontakt_tel=kontakt_tel,
             povprecna_ocena=float(povprecna_ocena),
             univerza=univerza
         )
@@ -349,7 +349,7 @@ def student_uredi_post():
             username=username,
             ime=ime,
             priimek=priimek,
-            kontakt_tel=int(kontakt_tel) if kontakt_tel else student_og.kontakt_tel,
+            kontakt_tel=kontakt_tel if kontakt_tel else student_og.kontakt_tel,
             povprecna_ocena=float(povprecna_ocena) if povprecna_ocena else student_og.povprecna_ocena,
             univerza=univerza if univerza else student_og.univerza
         )
