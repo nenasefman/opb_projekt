@@ -718,4 +718,5 @@ def prijava_posodobi_status(id_prijave):
 
 # ------------------------------- POGANJANJE APPA ------------------------------
 
-run(host='localhost', port=SERVER_PORT, reloader=RELOADER, debug=True)
+if __name__ == '__main__':
+    run(host='localhost', port=SERVER_PORT, reloader=RELOADER, debug=True)
