@@ -6,22 +6,17 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background-color: #fff4e6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .card { border: 1px solid #ffcc99; box-shadow: 0 2px 10px rgba(255, 123, 0, 0.1); }
+        .card { border: 1px solid #ffcc99; box-shadow: 0 2px 10px rgba(255, 123, 0, 0.1); border-radius: 0.75rem; padding: 2rem; max-width: 2xl; margin: auto; transition: transform 0.2s ease; }
         .text-orange-custom { color: #ff7b00; }
-        .btn-custom-primary { background-color: #ff7b00; border: none; font-weight: bold; }
+        .btn-custom-primary { background-color: #ff7b00; border: none; }
         .btn-custom-primary:hover { background-color: #e66a00; }
-        .btn-custom-secondary { background-color: #ffa64d; border: none; font-weight: bold; }
+        .btn-custom-secondary { background-color: #ffa64d; border: none; }
         .btn-custom-secondary:hover { background-color: #ff8c1a; }
-        .card-title { font-size: 1.875rem; font-weight: 700; color: #1f2937; text-align: center; margin-bottom: 1.5rem; }
-        .card-content p { margin-bottom: 0.5rem; }
-        .btn-group { display: flex; justify-content: center; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
     </style>
 </head>
 <body>
-<div class="container mx-auto py-8 space-y-8">
-
-    <!-- Navigacija -->
-    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-2">
+<div class="container mx-auto py-8">
+    <div class="flex justify-between items-center mb-6">
         <h2 class="text-4xl font-extrabold text-gray-900 text-orange-custom">Moj profil podjetja</h2>
         <div class="space-x-2">
             <a href="/podjetje/home" class="btn-custom-secondary text-white px-4 py-2 rounded-md">Domov</a>
@@ -30,20 +25,17 @@
         </div>
     </div>
 
-    <!-- Kartica: Podatki o podjetju -->
-    <div class="bg-white p-8 rounded-lg card flex flex-col items-center text-center">
-        <h3 class="card-title">Podatki o podjetju</h3>
-        <div class="card-content text-gray-700">
-            <p><strong>Ime podjetja:</strong> {{ podjetje.ime }}</p>
-            <p><strong>Sedež:</strong> {{ podjetje.sedez }}</p>
-            <p><strong>Kontaktni e-mail:</strong> {{ podjetje.kontakt_mail }}</p>
-            <p><strong>Število pripravništev:</strong> {{ podjetje.st_pripravnistev }}</p>
-        </div>
-        <div class="btn-group">
+    <div class="bg-white card text-gray-700 text-center">
+        <h3 class="text-2xl font-bold mb-6">Podatki o podjetju</h3>
+        <p><strong>Ime podjetja:</strong> {{ podjetje.ime }}</p>
+        <p><strong>Sedež:</strong> {{ podjetje.sedez }}</p>
+        <p><strong>Kontaktni e-mail:</strong> {{ podjetje.kontakt_mail }}</p>
+        <p><strong>Število pripravništev:</strong> {{ podjetje.st_pripravnistev }}</p>
+
+        <div class="mt-6">
             <a href="/podjetje/profil/uredi" class="btn-custom-primary text-white px-6 py-2 rounded-md">Uredi profil</a>
         </div>
     </div>
-
 </div>
 </body>
 </html>

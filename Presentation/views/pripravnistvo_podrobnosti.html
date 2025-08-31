@@ -20,7 +20,6 @@
 <body>
 <div class="container mx-auto py-8 space-y-6">
 
-    <!-- Kartica: Podjetje -->
     <div class="bg-white p-6 rounded-lg shadow-md card">
         <h3 class="card-title">Podatki o podjetju</h3>
         <div class="card-content text-gray-700">
@@ -30,20 +29,18 @@
         </div>
     </div>
 
-    <!-- Kartica: Pripravništvo -->
     <div class="bg-white p-6 rounded-lg shadow-md card">
         <h3 class="card-title">Podatki o pripravništvu</h3>
         <div class="card-content text-gray-700">
             <p><strong>Delovno mesto:</strong> {{ pripravnistvo.delovno_mesto }}</p>
             <p><strong>Lokacija:</strong> {{ pripravnistvo.kraj }}, {{ pripravnistvo.drzava }}</p>
-            <p><strong>Trajanje:</strong> {{ pripravnistvo.trajanje }} mesecev</p>
-            <p><strong>Plačilo:</strong> {{ "{:.2f}".format(pripravnistvo.placilo) }} €</p>
+            <p><strong>Trajanje (v mesecih):</strong> {{ pripravnistvo.trajanje }} mesecev</p>
+            <p><strong>Plačilo (€ bruto na mesec):</strong> {{ "{:.2f}".format(pripravnistvo.placilo) }} €</p>
             <p><strong>Število prostih mest:</strong> {{ pripravnistvo.stevilo_mest }}</p>
             <h4 class="text-lg font-semibold mt-4 mb-2">Opis dela</h4>
             <p class="whitespace-pre-line">{{ pripravnistvo.opis_dela }}</p>
         </div>
 
-        <!-- Gumbi -->
         <div class="btn-group mt-4">
             <a href="/student/home" class="btn-custom-secondary text-white px-4 py-2 rounded-md">Nazaj</a>
             

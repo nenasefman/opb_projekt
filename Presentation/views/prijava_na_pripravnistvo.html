@@ -22,20 +22,13 @@
         <p><strong>Podjetje:</strong> {{ pripravnistvo.podjetje }}</p>
         <p><strong>Delovno mesto:</strong> {{ pripravnistvo.delovno_mesto }}</p>
         <p><strong>Kraj:</strong> {{ pripravnistvo.kraj }}, {{ pripravnistvo.drzava }}</p>
-        <p><strong>Trajanje:</strong> {{ pripravnistvo.trajanje }} mesecev</p>
-        <p><strong>Plačilo:</strong> {{ "{:.2f}".format(pripravnistvo.placilo) }} €</p>
+        <p><strong>Trajanje (v mesecih):</strong> {{ pripravnistvo.trajanje }} mesecev</p>
+        <p><strong>Plačilo (€ bruto na mesec):</strong> {{ "{:.2f}".format(pripravnistvo.placilo) }} €</p>
         <p><strong>Število mest:</strong> {{ pripravnistvo.stevilo_mest }}</p>
     </div>
 
     <div class="flex space-x-4">
         <form method="post" action="/pripravnistvo/{{ pripravnistvo.id }}/prijava" class="flex-1">
-            <!-- Tu lahko dodaš polje za motivacijo, če hočeš -->
-            <!--
-            <div>
-                <label for="motivacija" class="block text-gray-700">Motivacija (neobvezno)</label>
-                <textarea id="motivacija" name="motivacija" rows="4" class="w-full border rounded p-2"></textarea>
-            </div>
-            -->
 
             <button type="submit"
                     class="px-6 py-2 bg-orange-500 text-white font-semibold rounded-lg shadow hover:bg-orange-600">
