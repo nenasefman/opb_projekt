@@ -451,15 +451,17 @@ def prijava_na_pripravnistvo_post(pripravnistvo_id):
 @get('/pripravnistvo/<id:int>', name='pripravnistvo_podrobnosti')
 @cookie_required
 def pripravnistvo_podrobnosti(id):
-    pripravnistvo = service.dobi_pripravnistvo_dto(id) 
+    pripravnistvo = service.dobi_pripravnistvo(id) 
 
     if not pripravnistvo:
         return template('napaka.html', sporocilo="Pripravništvo ne obstaja.")
-
+    
+    podjetje = service.dobi_podjetje(pripravnistvo.podjetje)
+    
     return template('pripravnistvo_podrobnosti.html',
                     pripravnistvo=pripravnistvo,
+                    podjetje=podjetje,
                     rola=request.get_cookie("rola"))
-
 
 
 
