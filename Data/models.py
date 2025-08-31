@@ -104,4 +104,4 @@ class PrijavaDto:
     podjetje: str = field(default="")  # join na podjetje (ime podjetja)
     pripravnistvo: str = field(default="")  # join na pripravništvo (delovno mesto)
     status: str = field(default="")
-    datum_prijave: datetime = field(default_factory=datetime.now)
+    datum_prijave: date = field(default_factory=date.today)
