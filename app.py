@@ -5,6 +5,7 @@ from Services.pripravnistva_service import PripravnistvaService
 from Services.auth_service import AuthService
 from Data.models import Student, Podjetje, Prijava, Pripravnistvo
 import os
+from decimal import Decimal, ROUND_HALF_UP
 import traceback
 
 service = PripravnistvaService()
@@ -229,7 +230,6 @@ def student_registracija_post():
     except HTTPResponse as r:   # to pusti redirectu da gre naprej
         raise r
     except Exception as e:
-        import traceback
         traceback.print_exc()   # izpiše cel stacktrace v konzolo
         return template('student_registracija.html', napaka=f"Napaka pri registraciji: {e}", 
                         username=username, ime=ime, priimek=priimek, kontakt_tel=kontakt_tel, 
@@ -287,7 +287,6 @@ def podjetje_registracija_post():
     except HTTPResponse as r:   # to pusti redirectu da gre naprej
         raise r
     except Exception as e:
-        import traceback
         traceback.print_exc()   # izpiše cel stacktrace v konzolo
         return template('podjetje_registracija.html', napaka=f"Napaka pri registraciji: {e}", 
                         username=username, ime=ime, kontakt_mail=kontakt_mail, sedez=sedez)
@@ -475,7 +474,7 @@ def pripravnistvo_dodaj_post():
         new_pripravnistvo = Pripravnistvo(
             id=None,
             podjetje=podjetje.username,  # tu uporabi podjetje.username
-            placilo=float(form.get('placilo')),
+            placilo = Decimal(form.get('placilo')).quantize(Decimal('0.00'), rounding=ROUND_HALF_UP),
             trajanje=form.get('trajanje'),
             kraj=form.get('kraj'),
             drzava=form.get('drzava'),
@@ -485,7 +484,6 @@ def pripravnistvo_dodaj_post():
         )
         service.dodaj_pripravnistvo(new_pripravnistvo)
     except Exception as e:
-        import traceback
         print(traceback.format_exc())
         return template('novo_pripravnistvo.html', napaka=f"Napaka pri dodajanju pripravništva: {str(e)}", podjetje=podjetje)
 
