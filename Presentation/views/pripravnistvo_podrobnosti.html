@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Podrobnosti pripravništva</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #fff4e6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .card { border: 1px solid #ffcc99; box-shadow: 0 2px 10px rgba(255, 123, 0, 0.1); }
+        .text-orange-custom { color: #ff7b00; }
+        .btn-custom-primary { background-color: #ff7b00; border: none; }
+        .btn-custom-primary:hover { background-color: #e66a00; }
+        .btn-custom-secondary { background-color: #ffa64d; border: none; }
+        .btn-custom-secondary:hover { background-color: #ff8c1a; }
+    </style>
+</head>
+<body>
+<div class="container mx-auto py-8">
+    <div class="card bg-white p-6 rounded-lg shadow-md">
+        <!-- Delovno mesto -->
+        <h2 class="text-3xl font-bold text-gray-900 text-orange-custom mb-4">
+            {{ pripravnistvo.delovno_mesto }}
+        </h2>
+
+        <!-- Podjetje -->
+        <p class="text-gray-700"><strong>Podjetje:</strong> {{ pripravnistvo.podjetje }}</p>
+
+        <!-- Lokacija -->
+        <p class="text-gray-700"><strong>Lokacija:</strong> {{ pripravnistvo.kraj }}, {{ pripravnistvo.drzava }}</p>
+
+        <!-- Trajanje -->
+        <p class="text-gray-700"><strong>Trajanje:</strong> {{ pripravnistvo.trajanje }} mesecev</p>
+
+        <!-- Plačilo -->
+        <p class="text-gray-700"><strong>Plačilo:</strong> {{ pripravnistvo.placilo }} €</p>
+
+        <!-- Število mest -->
+        <p class="text-gray-700"><strong>Število prostih mest:</strong> {{ pripravnistvo.stevilo_mest }}</p>
+
+        <!-- Opis dela -->
+        <h3 class="text-xl font-semibold mt-4 mb-2">Opis dela</h3>
+        <p class="text-gray-700 whitespace-pre-line">{{ pripravnistvo.opis_dela }}</p>
+
+        <!-- Gumbi -->
+        <div class="mt-6 flex space-x-4">
+            <a href="/student/home" class="btn-custom-secondary text-white px-4 py-2 rounded-md">Nazaj</a>
+
+            % if rola == 'student':
+            <form action="/pripravnistvo/{{ pripravnistvo.id }}/prijava" method="post">
+                <button type="submit" class="btn-custom-primary text-white px-4 py-2 rounded-md">
+                    Prijavi se
+                </button>
+            </form>
+            % end
+        </div>
+    </div>
+</div>
+</body>
+</html>

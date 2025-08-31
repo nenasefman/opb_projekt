@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from dataclasses_json import dataclass_json
-from datetime import datetime
+from datetime import datetime, date
 
 # V tej datoteki definiramo vse podatkovne modele, ki jih bomo uporabljali v aplikaciji.
 
@@ -93,7 +93,7 @@ class PripravnistvoDto:
 class Prijava:
     id: int = field(default=0)
     status: str = field(default="") # npr. "v obravnavi", "odobrena", "zavrnjena"
-    datum_prijave: datetime = field(default_factory=datetime.now)
+    datum_prijave: date = field(default_factory=date.today)
     student: str = field(default="")     # referenca na Student
     pripravnistvo: int = field(default=0)  # referenca na Pripravnistvo
 

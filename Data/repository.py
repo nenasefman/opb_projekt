@@ -303,15 +303,36 @@ class Repo:
         self.conn.commit()
 
     # ---------------- Prijave na pripravništva ----------------
+
+    def dodaj_prijavo(self, prijava: Prijava) -> None:
+        """Doda novo prijavo študenta v bazo."""
+        self.cur.execute("""
+            INSERT INTO prijava (status, datum_prijave, student, pripravnistvo_id)
+            VALUES (%s, %s, %s, %s)
+        """, (prijava.status, prijava.datum_prijave, prijava.student, prijava.pripravnistvo
+        ))
+        self.conn.commit()
+
     def dobi_prijave_studenta(self, username: str) -> List[Prijava]:
         """Vrne vse prijave, ki jih je študent oddal."""
         self.cur.execute("""
-            SELECT id, status, datum_prijave, student, pripravnistvo
+            SELECT id, status, datum_prijave, student, pripravnistvo_id
             FROM prijava
             WHERE student = %s
         """, (username,))
         return [Prijava.from_dict(r) for r in self.cur.fetchall()]
     
+    def dobi_prijavo_studenta(self, username: str, pripravnistvo_id: int) -> Prijava:
+        """Vrne prijavo študenta na točno določeno pripravništvo (če obstaja)."""
+        self.cur.execute("""
+            SELECT id, status, datum_prijave, student, pripravnistvo_id
+            FROM prijava
+            WHERE student = %s AND pripravnistvo_id = %s
+        """, (username, pripravnistvo_id))
+
+        r = self.cur.fetchone()
+        return Prijava.from_dict(r) if r else None
+
     def dobi_prijave_studenta_dto(self, username: str) -> List[PrijavaDto]:
         """Vrne vse prijave določenega študenta v DTO obliki (student, podjetje, pripravništvo)."""
         self.cur.execute("""
@@ -332,9 +353,9 @@ class Repo:
     def dobi_prijave_na_pripravnistvo(self, id: int) -> List[Prijava]:
         """Vrne vse prijave za določeno pripravništvo."""
         self.cur.execute("""
-            SELECT id, status, datum_prijave, student, pripravnistvo
+            SELECT id, status, datum_prijave, student, pripravnistvo_id
             FROM prijava
-            WHERE pripravnistvo = %s
+            WHERE pripravnistvo_id = %s
             ORDER BY datum_prijave DESC
         """, (id,))
         return [Prijava.from_dict(r) for r in self.cur.fetchall()]
@@ -359,7 +380,7 @@ class Repo:
     def dobi_prijave_podjetja(self, username: str) -> List[Prijava]:
         """Vrne vse prijave, ki so bile oddane za pripravništva tega podjetja."""
         self.cur.execute("""
-            SELECT prij.id, prij.status, prij.datum_prijave, prij.student, prij.pripravnistvo
+            SELECT prij.id, prij.status, prij.datum_prijave, prij.student, prij.pripravnistvo_id
             FROM prijava prij
             JOIN pripravnistvo pripr ON prij.pripravnistvo_id = pripr.id
             WHERE pripr.podjetje = %s

@@ -68,8 +68,15 @@ class PripravnistvaService:
         self.repo.izbrisi_pripravnistvo(id)
 
     # ---------------- Prijave ----------------
+
+    def dodaj_prijavo(self, prijava: Prijava) -> None:
+        return self.repo.dodaj_prijavo(prijava)
+
     def dobi_prijave_studenta(self, username: str) -> List[Prijava]:
         return self.repo.dobi_prijave_studenta(username)
+    
+    def dobi_prijavo_studenta(self, username: str, id: int) -> Optional[Prijava]:
+        return self.repo.dobi_prijavo_studenta(username, id)
 
     def dobi_prijave_studenta_dto(self, username: str) -> List[PrijavaDto]:
         return self.repo.dobi_prijave_studenta_dto(username)

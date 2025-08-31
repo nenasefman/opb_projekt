@@ -52,7 +52,7 @@
 
                         <!-- Gumb za prijavo samo za študente -->
                         % if rola == 'student':
-                        <form action="/pripravnistvo/{{ p.id }}/prijava" method="post" class="inline-block mt-2">
+                        <form action="/pripravnistvo/{{ p.id }}/prijava" method="get" class="inline-block mt-2">
                             <button type="submit" class="btn-custom-secondary text-white px-4 py-2 rounded-md shadow-sm">
                                     Prijavi se
                                 </button>
