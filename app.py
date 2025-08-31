@@ -677,7 +677,7 @@ def pripravnistvo_prijave(id):
 
     pripravnistvo = service.dobi_pripravnistvo(id)
     if not pripravnistvo:
-        redirect(url('podjetje_profil'))
+        redirect(url('podjetje_home'))
 
     prijave = service.dobi_prijave_na_pripravnistvo(id)
 
@@ -695,9 +695,9 @@ def pripravnistvo_prijave(id):
         prijave=prijave_s_podatki
     )
 
-@post('/prijava/posodobi_status/<id_prijave>', name='posodobi_status')
+@post('/prijava/posodobi_status/<id_prijave>', name='prijava_posodobi_status')
 @cookie_required
-def posodobi_status(id_prijave):
+def prijava_posodobi_status(id_prijave):
     ''' Posodobi status prijave '''
     nov_status = request.forms.get('nov_status')
     prijava_id = int(id_prijave)
@@ -719,6 +719,7 @@ def posodobi_status(id_prijave):
     else:
         # Če referer ni na voljo, preusmerimo na domačo stran podjetja
         redirect(url('podjetje_home'))
+
 
 # ------------------------------- POGANJANJE APPA ------------------------------
 
