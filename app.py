@@ -5,7 +5,6 @@ from Services.pripravnistva_service import PripravnistvaService
 from Services.auth_service import AuthService
 from Data.models import Student, Podjetje, Prijava, Pripravnistvo
 import os
-from decimal import Decimal, ROUND_HALF_UP
 import traceback
 
 service = PripravnistvaService()
