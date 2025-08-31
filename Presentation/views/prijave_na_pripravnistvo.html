@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <title>Prijave na pripravništvo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #fff4e6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .card { border: 1px solid #ffcc99; box-shadow: 0 2px 10px rgba(255, 123, 0, 0.1); }
+        .text-orange-custom { color: #ff7b00; }
+        .btn-custom-primary { background-color: #ff7b00; border: none; font-weight: bold; }
+        .btn-custom-primary:hover { background-color: #e66a00; }
+        .btn-custom-secondary { background-color: #ffa64d; border: none; font-weight: bold; }
+        .btn-custom-secondary:hover { background-color: #ff8c1a; }
+        .card-title { font-size: 1.875rem; font-weight: 700; color: #1f2937; text-align: center; margin-bottom: 1.5rem; }
+        .btn-group { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
+    </style>
+</head>
+<body>
+<div class="container mx-auto py-8 space-y-8">
+
+    <!-- Navigacija -->
+    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-2">
+        <h2 class="text-4xl font-extrabold text-gray-900 text-orange-custom">Prijave na pripravništvo: {{ pripravnistvo.delovno_mesto }}</h2>
+        <div class="space-x-2">
+            <a href="/podjetje/home" class="btn-custom-secondary text-white px-4 py-2 rounded-md">Domov</a>
+            <a href="/podjetje/profil" class="btn-custom-secondary text-white px-4 py-2 rounded-md">Nazaj na profil</a>
+        </div>
+    </div>
+
+    % if prijave:
+        <div class="space-y-4">
+            % for p in prijave:
+                <div class="bg-white p-6 rounded-lg card">
+                    <!-- Podatki o študentu -->
+                    <h3 class="text-xl font-semibold mb-2">Podatki o študentu</h3>
+                    <p><strong>Ime in priimek:</strong> {{ p['student'].ime }} {{ p['student'].priimek }}</p>
+                    <p><strong>Kontakt:</strong> {{ p['student'].kontakt_tel }}</p>
+                    <p><strong>Univerza:</strong> {{ p['student'].univerza }}</p>
+                    <p><strong>Povprečna ocena:</strong> {{ "{:.1f}".format(p['student'].povprecna_ocena) }}</p>
+
+                    <!-- Podatki o prijavi -->
+                    <h3 class="text-xl font-semibold mt-4 mb-2">Podatki o prijavi</h3>
+                    <p><strong>Status:</strong> {{ p['prijava'].status }}</p>
+                    <p><strong>Datum prijave:</strong> {{ p['prijava'].datum_prijave.strftime("%d.%m.%Y") }}</p>
+
+                    <div class="btn-group">
+                        <a href="/prijava/izbrisi/{{ p['prijava'].student }}/{{ pripravnistvo.id }}" class="btn-custom-primary text-white px-4 py-2 rounded-md">Izbriši prijavo</a>
+                    </div>
+                </div>
+            % end
+        </div>
+    % else:
+        <p class="text-center text-gray-600 text-lg">Trenutno ni prijav na to pripravništvo.</p>
+    % end
+
+</div>
+</body>
+</html>

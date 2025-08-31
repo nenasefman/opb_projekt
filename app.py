@@ -451,7 +451,7 @@ def prijava_na_pripravnistvo_post(pripravnistvo_id):
 @get('/pripravnistvo/<id:int>', name='pripravnistvo_podrobnosti')
 @cookie_required
 def pripravnistvo_podrobnosti(id):
-    pripravnistvo = service.dobi_pripravnistvo(id) 
+    pripravnistvo = service.dobi_pripravnistvo_dto(id) 
 
     if not pripravnistvo:
         return template('napaka.html', sporocilo="Pripravništvo ne obstaja.")
@@ -675,7 +675,35 @@ def pripravnistvo_uredi_post(id):
     
     redirect(url('podjetje_profil'))
 
+# ------------------------------- OGLED PRIJAV NA PRIPRAVNIŠTVO ------------------------------
 
+@get('/pripravnistvo/prijave/<id:int>')
+@cookie_required
+def pripravnistvo_prijave(id):
+    rola = request.get_cookie("rola")
+
+    if rola != 'podjetje':
+        redirect(url('index'))
+
+    pripravnistvo = service.dobi_pripravnistvo(id)
+    if not pripravnistvo:
+        redirect(url('podjetje_profil'))
+
+    prijave = service.dobi_prijave_na_pripravnistvo(id)
+
+    # Za vsako prijavo dobim še podatko o študentu
+    prijave_s_podatki = []
+    for prijava in prijave:
+        student = service.dobi_studenta(prijava.student)
+        prijave_s_podatki.append({
+            'prijava': prijava,
+            'student': student})
+
+    return template(
+        'prijave_na_pripravnistvo.html',
+        pripravnistvo=pripravnistvo,
+        prijave=prijave_s_podatki
+    )
 
 
 

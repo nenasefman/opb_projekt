@@ -372,7 +372,7 @@ class Repo:
             JOIN student stud ON prij.student = stud.username
             JOIN pripravnistvo pripr ON prij.pripravnistvo_id = pripr.id
             JOIN podjetje pod ON pripr.podjetje = pod.username
-            WHERE prij.pripravnistvo = %s
+            WHERE prij.pripravnistvo_id = %s
             ORDER BY prij.datum_prijave DESC
         """, (id,))
         return [PrijavaDto.from_dict(r) for r in self.cur.fetchall()]

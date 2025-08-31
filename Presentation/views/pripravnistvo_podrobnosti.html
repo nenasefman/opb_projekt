@@ -46,7 +46,7 @@
             <a href="/student/home" class="btn-custom-secondary text-white px-4 py-2 rounded-md">Nazaj</a>
 
             % if rola == 'student':
-            <form action="/pripravnistvo/{{ pripravnistvo.id }}/prijava" method="post">
+            <form action="/pripravnistvo/{{ pripravnistvo.id }}/prijava" method="get">
                 <button type="submit" class="btn-custom-primary text-white px-4 py-2 rounded-md">
                     Prijavi se
                 </button>
