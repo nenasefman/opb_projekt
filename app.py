@@ -297,6 +297,18 @@ def student_profil():
     return template('student_profil.html', student=student)
 
 
+@get('/student/<username>', name='student_profil_za_podjetja')
+def student_profil_za_podjetja(username):
+    """
+    Prikaže profil določenega študenta na podlagi njegovega uporabniškega imena.
+    """
+    # Tukaj dobiš podatke o študentu iz baze
+    student = service.dobi_studenta(student.ime)
+    if not student:
+        return template("napaka.html", sporocilo="Študent ne obstaja.", napaka=None)
+    return template("profil_studenta_za_podjetje.html", student=student, napaka=None)
+
+
 @get('/student/profil/uredi')
 @cookie_required
 def student_uredi_get():
@@ -527,7 +539,7 @@ def podjetje_uredi_post():
 
     if rola != "podjetje":
         redirect(url('index'))
-        
+
     # Originalni podatki podjetja
     podjetje_og = service.dobi_podjetje(username)
     # Podatki iz obrazca
