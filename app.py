@@ -368,11 +368,20 @@ def podjetje_profil():
     rola = request.get_cookie("rola")
     if rola != "podjetje":
         redirect(url('index'))
-    # Pridobimo podatke o podjetju
+
     podjetje = service.dobi_podjetje_dto(username)
     if not podjetje:
+        return template('napaka.html', napaka="Profil podjetja ne obstaja.")
+
+    # Pridobimo podatke o podjetju
+    podjetje = service.dobi_podjetje_dto(username)
+
+    vsa_pripravnistva = service.dobi_vsa_pripravnistva_dto()
+    pripravnistva = [p for p in vsa_pripravnistva if p.podjetje == podjetje.ime]
+
+    if rola != "podjetje":
         return template('napaka.html', napaka="Profil podjetje ne obstaja.")
-    return template('podjetje_profil.html', podjetje=podjetje)
+    return template('podjetje_profil.html', pripravnistva=pripravnistva, podjetje=podjetje, username=username, napaka=None)
 
 
 @get('/podjetje/profil/uredi')
@@ -448,8 +457,8 @@ def pripravnistvo_dodaj_get():
     username = request.get_cookie("uporabnik")
     rola = request.get_cookie("rola")
 
-    if rola not in ['admin', 'podjetje']:
-        redirect(url('index'))  # Samo admin in podjetja lahko dodajajo
+    if rola != "podjetje":
+        redirect(url('index'))  # Samo podjetja lahko dodajajo
 
     podjetje = service.dobi_podjetje(username)  # <-- dodano
 
@@ -461,20 +470,19 @@ def pripravnistvo_dodaj_get():
 def pripravnistvo_dodaj_post():
     username = request.get_cookie("uporabnik")
     rola = request.get_cookie("rola")
-    if rola not in ['admin', 'podjetje']:
-        return redirect(url('index'))
+    if rola != "podjetje":
+        redirect(url('index'))
 
     podjetje = service.dobi_podjetje(username)
-
     if not podjetje:
-        return template('novo_pripravnistvo.html', napaka="Podjetje ni najdeno. Napaka pri dodajanju pripravništva.", podjetje=None)
+        return template('novo_pripravnistvo.html', napaka="Podjetje ni najdeno. Napaka pri dodajanju pripravništva.")
 
     try:
         form = fix_form_encoding(request.forms)
         new_pripravnistvo = Pripravnistvo(
             id=None,
-            podjetje=podjetje.username,  # tu uporabi podjetje.username
-            placilo = Decimal(form.get('placilo')).quantize(Decimal('0.00'), rounding=ROUND_HALF_UP),
+            podjetje=podjetje.username,
+            placilo=float(form.get('placilo')),
             trajanje=form.get('trajanje'),
             kraj=form.get('kraj'),
             drzava=form.get('drzava'),
@@ -483,12 +491,11 @@ def pripravnistvo_dodaj_post():
             stevilo_mest=form.get('stevilo_mest')
         )
         service.dodaj_pripravnistvo(new_pripravnistvo)
-    except Exception as e:
-        print(traceback.format_exc())
-        return template('novo_pripravnistvo.html', napaka=f"Napaka pri dodajanju pripravništva: {str(e)}", podjetje=podjetje)
 
-    # redirect NE v try/except
-    return redirect(url('pripravnistva_list'))
+        # Namesto redirecta vrnemo nov HTML template
+        return template('oddaja_uspesna.html', podjetje=podjetje, rola=rola)  # tukaj je tvoj novi template
+    except Exception as e:
+        return template('novo_pripravnistvo.html', napaka=f"Napaka pri dodajanju pripravništva: {e}")
 
 # # Urejanje pripravništva
 # @get('/pripravnistvo/uredi/<id:int>')
