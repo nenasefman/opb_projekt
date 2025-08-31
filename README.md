@@ -12,7 +12,6 @@ Si tik pred diplomo, bogat z znanjem, a brez praktičnih izkušenj?
 Aplikacija pripravništvo_najdi.si ti omogoča:
 
 - iskanje plačanih in neplačanih pripravništev po vsem svetu,
-- filtriranje pripravništev glede na področje, lokacijo in trajanje,
 - oddajo prijave neposredno preko spletnega vmesnika.
 
 ### Za podjetja
@@ -27,8 +26,10 @@ S prijavo v aplikacijo lahko:
 ---
 ### Tehnične podorbnosti 
 
-Aplikacija je razvita v programskem jeziku Python z uporabo Bottle frameworka, ki skrbi za usmerjanje zahtevkov, obdelavo HTTP metod in povezovanje s predlogami. Za oblikovanje uporabniškega vmesnika je uporabljen TailwindCSS, ki omogoča odziven in estetski dizajn brez kompleksnega CSS-ja. Podatki so shranjeni v PostgreSQL bazi. Projekt sestavljajo štiri mape. Prva "Baza" vsebuje kodo za ustvarjanje tabel v podatkovni bazi in dostop do njih. Naslednja je "Data", ki skrbi za dostop do baze. "Services" je za uvoz podatkov in  "Presentation/views" pa vsebujejo HTML template-e za prikaz podatkov uporabniku.
+Aplikacija je razvita v programskem jeziku Python z uporabo Bottle frameworka, ki skrbi za usmerjanje zahtevkov, obdelavo HTTP metod in povezovanje s predlogami. Za oblikovanje uporabniškega vmesnika je uporabljen TailwindCSS, ki omogoča odziven in estetski dizajn brez kompleksnega CSS-ja. Podatki so shranjeni v PostgreSQL bazi. Projekt sestavljajo štiri mape. Prva "Baza" vsebuje kodo za ustvarjanje tabel v podatkovni bazi in dostop do njih. Naslednja je "Data", ki skrbi za dostop do baze. "Services" je za uvoz podatkov,  "Presentation/views" pa vsebujejo HTML template-e za prikaz podatkov uporabniku.
+Za zagon aplikacije poženemo datoteko "app.py".
 
+(p.s. Binder ne dela oziroma ga nisva znali usposobit.)
 
 ---
 
