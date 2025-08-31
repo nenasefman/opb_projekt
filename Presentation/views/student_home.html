@@ -42,7 +42,7 @@
                         <p class="text-gray-600 mb-1"><strong>Podjetje:</strong> {{ p.podjetje }}</p>
                         <p class="text-gray-600 mb-1"><strong>Lokacija:</strong> {{ p.kraj }}, {{ p.drzava }}</p>
                         <p class="text-gray-600 mb-1"><strong>Trajanje:</strong> {{ p.trajanje }} mesecev</p>
-                        <p class="text-gray-600 mb-1"><strong>Plačilo:</strong> {{ p.placilo }} €</p>
+                        <p class="text-gray-600 mb-1"><strong>Plačilo:</strong> {{ "{:.2f}".format(p.placilo) }} €</p>
 
                         <!-- Gumb za več podrobnosti -->
                         <a href="/pripravnistvo/{{ p.id }}"
