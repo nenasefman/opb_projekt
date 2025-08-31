@@ -37,44 +37,46 @@
 
         <form action="/pripravnistvo/dodaj" method="post">
             <div class="mb-3">
+                <label for="podjetje" class="form-label">Naziv podjetja</label>
+                <input type="text" id="podjetje" name="podjetje" 
+                       class="form-control" 
+                       value="{{ podjetje.username }}" 
+                       readonly>
+            </div>
+
+            <div class="mb-3">
                 <label for="delovno_mesto" class="form-label">Delovno mesto</label>
-                <input type="text" id="delovno_mesto" name="delovno_mesto" class="form-control" 
-                       value="{{ pripravnistvo.delovno_mesto if pripravnistvo else '' }}" required>
+                <input type="text" id="delovno_mesto" name="delovno_mesto" class="form-control" required>
             </div>
 
             <div class="mb-3">
                 <label for="placilo" class="form-label">Plačilo (€)</label>
-                <input type="number" step="0.01" id="placilo" name="placilo" class="form-control" 
-                       value="{{ pripravnistvo.placilo if pripravnistvo else '' }}" required>
+                <input type="number" step="0.01" id="placilo" name="placilo" class="form-control" required>
             </div>
 
             <div class="mb-3">
                 <label for="trajanje" class="form-label">Trajanje (v mesecih)</label>
-                <input type="number" id="trajanje" name="trajanje" class="form-control" 
-                       value="{{ pripravnistvo.trajanje if pripravnistvo else '' }}" required>
+                <input type="number" id="trajanje" name="trajanje" class="form-control" required>
             </div>
 
             <div class="mb-3">
                 <label for="kraj" class="form-label">Kraj</label>
-                <input type="text" id="kraj" name="kraj" class="form-control" 
-                       value="{{ pripravnistvo.kraj if pripravnistvo else '' }}" required>
+                <input type="text" id="kraj" name="kraj" class="form-control" required>
             </div>
 
             <div class="mb-3">
                 <label for="drzava" class="form-label">Država</label>
-                <input type="text" id="drzava" name="drzava" class="form-control" 
-                       value="{{ pripravnistvo.drzava if pripravnistvo else '' }}" required>
+                <input type="text" id="drzava" name="drzava" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="stevilo_mest" class="form-label">število prostih mest</label>
+                <input type="number" id="stevilo_mest" name="stevilo_mest" class="form-control" required min="1">
             </div>
 
             <div class="mb-3">
                 <label for="opis_dela" class="form-label">Opis dela</label>
-                <textarea id="opis_dela" name="opis_dela" class="form-control" rows="4" required>{{ pripravnistvo.opis_dela if pripravnistvo else '' }}</textarea>
-            </div>
-
-            <div class="mb-3">
-                <label for="stevilo_mest" class="form-label">Število mest</label>
-                <input type="number" id="stevilo_mest" name="stevilo_mest" class="form-control" 
-                       value="{{ pripravnistvo.stevilo_mest if pripravnistvo else '1' }}" required>
+                <textarea id="opis_dela" name="opis_dela" class="form-control" rows="4" required></textarea>
             </div>
 
             <button type="submit" class="btn btn-primary w-100">Dodaj pripravništvo</button>

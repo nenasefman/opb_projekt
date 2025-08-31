@@ -5,6 +5,7 @@ from Services.pripravnistva_service import PripravnistvaService
 from Services.auth_service import AuthService
 from Data.models import Student, Podjetje, Prijava, Pripravnistvo
 import os
+import traceback
 
 service = PripravnistvaService()
 auth = AuthService()
@@ -421,10 +422,14 @@ def podjetje_uredi_post():
 @get('/pripravnistva')
 @cookie_required
 def pripravnistva_list():
-   rola = request.get_cookie("rola")
-   pripravnistva_dto = service.dobi_vsa_pripravnistva_dto()
-   return template('novo_pripravnistvo.html', pripravnistva=pripravnistva_dto, rola=rola)
+    rola = request.get_cookie("rola")
+    pripravnistva_dto = service.dobi_vsa_pripravnistva_dto()
 
+    # Dobimo username podjetja iz piškotka
+    username = request.get_cookie("uporabnik")
+    podjetje = service.dobi_podjetje(username) if rola == 'podjetje' else None
+
+    return template('novo_pripravnistvo.html', pripravnistva=pripravnistva_dto, podjetje=podjetje, rola=rola, napaka=None)
 
 @get('/pripravnistvo/<id:int>')
 @cookie_required
@@ -441,45 +446,51 @@ def pripravnistvo_detail(id):
 @get('/pripravnistvo/dodaj', name='pripravnistvo_dodaj_get')
 @cookie_required
 def pripravnistvo_dodaj_get():
+    username = request.get_cookie("uporabnik")
     rola = request.get_cookie("rola")
+
     if rola not in ['admin', 'podjetje']:
         redirect(url('index'))  # Samo admin in podjetja lahko dodajajo
 
-    # Tukaj vrnemo template, ko ima uporabnik pravice
-    return template('novo_pripravnistvo.html', napaka=None)
+    podjetje = service.dobi_podjetje(username)  # <-- dodano
+
+    return template('novo_pripravnistvo.html', napaka=None, podjetje=podjetje)
 
 
-@post('/pripravnistvo/dodaj', name='pripravnistvo_dodaj_get')
+@post('/pripravnistvo/dodaj', name='pripravnistvo_dodaj_post')
 @cookie_required
 def pripravnistvo_dodaj_post():
-   username = request.get_cookie("uporabnik")
-   rola = request.get_cookie("rola")
-   if rola not in ['admin', 'podjetje']:
-       redirect(url('index'))
-   
-   podjetje = service.dobi_podjetje(username)
+    username = request.get_cookie("uporabnik")
+    rola = request.get_cookie("rola")
+    if rola not in ['admin', 'podjetje']:
+        return redirect(url('index'))
 
-   if not podjetje:
-       return template('novo_pripravnistvo.html', napaka="Podjetje ni najdeno. Napaka pri dodajanju pripravništva.")
+    podjetje = service.dobi_podjetje(username)
 
-   try:
-       form = fix_form_encoding(request.forms)
-       new_pripravnistvo = Pripravnistvo(
-           id=None,
-           podjetje_id=form.get('podjetje.username'),
-           placilo=float(form.get('placilo')),
-           trajanje=form.get('trajanje'),
-           kraj=form.get('kraj'),
-           drzava=form.get('drzava'),
-           delovno_mesto=form.get('delovno_mesto'),
-           opis_dela=form.get('opis_dela'),
-           stevilo_mest=form.get('stevilo_mest')
-       )
-       service.dodaj_pripravnistvo(new_pripravnistvo)
-       redirect(url('pripravnistva_list'))
-   except Exception as e:
-       return template('novo_pripravnistvo.html', napaka=f"Napaka pri dodajanju pripravništva: {e}")
+    if not podjetje:
+        return template('novo_pripravnistvo.html', napaka="Podjetje ni najdeno. Napaka pri dodajanju pripravništva.", podjetje=None)
 
+    try:
+        form = fix_form_encoding(request.forms)
+        new_pripravnistvo = Pripravnistvo(
+            id=None,
+            podjetje=podjetje.username,  # tu uporabi podjetje.username
+            placilo=float(form.get('placilo')),
+            trajanje=form.get('trajanje'),
+            kraj=form.get('kraj'),
+            drzava=form.get('drzava'),
+            delovno_mesto=form.get('delovno_mesto'),
+            opis_dela=form.get('opis_dela'),
+            stevilo_mest=form.get('stevilo_mest')
+        )
+        service.dodaj_pripravnistvo(new_pripravnistvo)
+    except Exception as e:
+        import traceback
+        print(traceback.format_exc())
+        return template('novo_pripravnistvo.html', napaka=f"Napaka pri dodajanju pripravništva: {str(e)}", podjetje=podjetje)
+
+    # redirect NE v try/except
+    return redirect(url('pripravnistva_list'))
 
 # # Urejanje pripravništva
 # @get('/pripravnistvo/uredi/<id:int>')
@@ -562,6 +573,7 @@ def prijava_na_pripravnistvo(pripravnistvo_id):
        redirect(url('index'))
 
    student = service.dobi_studenta(username)
+   pripravnistvo = service.dobi_pripravnistvo_dto(id)
 
    if not student:
        return template('prijava_na_pripravnistvo.html', napaka="Študent ni najden. Prosimo, prijavite se ponovno.", 
@@ -571,9 +583,9 @@ def prijava_na_pripravnistvo(pripravnistvo_id):
        new_prijava = Prijava(
            id=None,
            status="V obravnavi", # Privzeti status
-           datum=datetime.now().date(),
-           student_emso=student.username,
-           pripravnistvo_id=pripravnistvo_id
+           datum_prijave=datetime.now(),
+           student=student.username,
+           pripravnistvo=pripravnistvo
        )
        service.dodaj_prijavo(new_prijava) # Predpostavimo metodo za dodajanje prijave
        redirect(url('student_profil')) # Preusmerimo na profil študenta, da vidi prijave
