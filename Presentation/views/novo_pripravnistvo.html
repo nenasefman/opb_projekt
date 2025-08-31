@@ -46,13 +46,6 @@
         % end
 
         <form action="/pripravnistvo/dodaj" method="post">
-            <div class="mb-3">
-                <label for="podjetje" class="form-label">Naziv podjetja</label>
-                <input type="text" id="podjetje" name="podjetje" 
-                       class="form-control" 
-                       value="{{ podjetje.username }}" 
-                       readonly>
-            </div>
 
             <div class="mb-3">
                 <label for="delovno_mesto" class="form-label">Delovno mesto</label>
@@ -80,7 +73,7 @@
             </div>
 
             <div class="mb-3">
-                <label for="stevilo_mest" class="form-label">število prostih mest</label>
+                <label for="stevilo_mest" class="form-label">Število prostih mest</label>
                 <input type="number" id="stevilo_mest" name="stevilo_mest" class="form-control" required min="1">
             </div>
 
