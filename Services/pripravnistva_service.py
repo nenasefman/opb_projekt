@@ -92,6 +92,9 @@ class PripravnistvaService:
 
     def dobi_prijave_podjetja_dto(self, username: str) -> List[PrijavaDto]:
         return self.repo.dobi_prijave_podjetja_dto(username)
+  
+    def posodobi_status_prijave(self, prijava_id: int, status: str) -> None:
+        self.repo.posodobi_status_prijave(prijava_id, status)
 
     def posodobi_prijavo(self, prijava: Prijava) -> None:
         self.repo.posodobi_prijavo(prijava)

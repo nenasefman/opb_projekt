@@ -2,8 +2,10 @@
 <html lang="sl">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prijave na pripravništvo</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <style>
         body { background-color: #fff4e6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         .card { border: 1px solid #ffcc99; box-shadow: 0 2px 10px rgba(255, 123, 0, 0.1); }
@@ -21,39 +23,40 @@
 
     <!-- Navigacija -->
     <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-2">
-        <h2 class="text-4xl font-extrabold text-gray-900 text-orange-custom">Prijave na pripravništvo: {{ pripravnistvo.delovno_mesto }}</h2>
+        <h2 class="text-4xl font-extrabold text-gray-900 text-orange-custom">Prijave za "{{ pripravnistvo.delovno_mesto }}"</h2>
         <div class="space-x-2">
-            <a href="/podjetje/home" class="btn-custom-secondary text-white px-4 py-2 rounded-md">Domov</a>
-            <a href="/podjetje/profil" class="btn-custom-secondary text-white px-4 py-2 rounded-md">Nazaj na profil</a>
+            <a href="/podjetje/home" class="btn-custom-secondary text-white px-4 py-2 rounded-md">Nazaj</a>
         </div>
     </div>
 
-    % if prijave:
-        <div class="space-y-4">
-            % for p in prijave:
-                <div class="bg-white p-6 rounded-lg card">
-                    <!-- Podatki o študentu -->
-                    <h3 class="text-xl font-semibold mb-2">Podatki o študentu</h3>
-                    <p><strong>Ime in priimek:</strong> {{ p['student'].ime }} {{ p['student'].priimek }}</p>
-                    <p><strong>Kontakt:</strong> {{ p['student'].kontakt_tel }}</p>
-                    <p><strong>Univerza:</strong> {{ p['student'].univerza }}</p>
-                    <p><strong>Povprečna ocena:</strong> {{ "{:.1f}".format(p['student'].povprecna_ocena) }}</p>
+    % if not prijave:
+        <p class="text-center text-gray-600 text-lg">Trenutno ni prejetih prijav za to pripravništvo.</p>
+    % else:
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            % for prijava in prijave:
+                <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition-shadow duration-200 card">
+                    <h4 class="text-xl font-semibold text-gray-800 mb-2">Študent: {{ prijava['student'] }}</h4>
+                    <p class="text-gray-600 mb-1"><strong>Datum prijave:</strong> {{ prijava['prijava'].datum_prijave.strftime("%d.%m.%Y") }}</p>
+                    <p class="text-gray-600 mb-1"><strong>Trenutni status:</strong> {{ prijava['prijava'].status }}</p>
+                    
+                    <!-- Obrazec za posodabljanje statusa -->
+                    <form action="{{ url('prijava_posodobi_status', id=prijava['prijava'].id) }}" method="post" class="mt-4">
+                        <label for="nov_status_{{ prijava['prijava'].id }}" class="block text-sm font-medium text-gray-700 mb-2">Spremeni status:</label>
+                        <select name="status" id="nov_status_{{ prijava['prijava'].id }}" class="status-select w-full mb-3" required>
+                            <option value="V obravnavi" % if prijava['prijava'].status == 'V obravnavi': selected % end>V obravnavi</option>
+                            <option value="Odobrena" % if prijava['prijava'].status == 'Odobrena': selected % end>Odobrena</option>
+                            <option value="Zavrnjena" % if prijava['prijava'].status == 'Zavrnjena': selected % end>Zavrnjena</option>
+                        </select>
+                        <button type="submit" class="w-full btn-custom-primary text-white py-2 rounded-md shadow-sm">Posodobi</button>
+                    </form>
 
-                    <!-- Podatki o prijavi -->
-                    <h3 class="text-xl font-semibold mt-4 mb-2">Podatki o prijavi</h3>
-                    <p><strong>Status:</strong> {{ p['prijava'].status }}</p>
-                    <p><strong>Datum prijave:</strong> {{ p['prijava'].datum_prijave.strftime("%d.%m.%Y") }}</p>
-
-                    <div class="btn-group">
-                        <a href="/prijava/izbrisi/{{ p['prijava'].student }}/{{ pripravnistvo.id }}" class="btn-custom-primary text-white px-4 py-2 rounded-md">Izbriši prijavo</a>
+                    <div class="mt-4 flex justify-end">
+                        <a href="/student/profil/{{ prijava['student'] }}" class="btn-custom-secondary text-white px-4 py-2 rounded-md">Ogled profila</a>
                     </div>
                 </div>
             % end
         </div>
-    % else:
-        <p class="text-center text-gray-600 text-lg">Trenutno ni prijav na to pripravništvo.</p>
-    % end
-
+    % endif
 </div>
 </body>
 </html>

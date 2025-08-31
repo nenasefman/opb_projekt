@@ -44,33 +44,6 @@
         </div>
     </div>
 
-    <!-- Kartica: Vaša pripravništva -->
-    <div class="bg-white p-8 rounded-lg card">
-        <h3 class="card-title">Vaša pripravništva</h3>
-        % if pripravnistva:
-            <div class="space-y-4">
-                % for p in pripravnistva:
-                    <div class="p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
-                        <h4 class="text-xl font-semibold mb-1">{{ p.delovno_mesto }}</h4>
-                        <p><strong>Trajanje (v mesecih):</strong> {{ p.trajanje }} </p>
-                        <p><strong>Plačilo:</strong> {{ "{:.2f}".format(p.placilo) }} €</p>
-                        <p><strong>Kraj:</strong> {{ p.kraj }}, {{ p.drzava }}</p>
-                        <p><strong>Število prostih mest:</strong> {{ p.stevilo_mest }}</p>
-                        <div class="btn-group mt-2">
-                            <a href="/pripravnistvo/prijave/{{ p.id }}" class="btn-custom-primary text-white px-4 py-2 rounded-md">Ogled prijav</a>
-                            <a href="/pripravnistvo/uredi/{{ p.id }}" class="btn-custom-secondary text-white px-4 py-2 rounded-md">Uredi pripravništvo</a>
-                        </div>
-                    </div>
-                % end
-            </div>
-        % else:
-            <p class="text-center text-gray-600 text-lg">Trenutno nimate objavljenih pripravništev.</p>
-            <div class="btn-group">
-                <a href="/pripravnistvo/dodaj" class="btn-custom-secondary text-white px-6 py-2 rounded-md">Dodaj novo pripravništvo</a>
-            </div>
-        % end
-    </div>
-
 </div>
 </body>
 </html>

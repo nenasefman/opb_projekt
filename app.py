@@ -479,17 +479,23 @@ def pripravnistvo_podrobnosti(id):
 @get('/podjetje/home', name='podjetje_home')
 @cookie_required
 def podjetje_home():
-    '''Domača stran za podjetja, kjer vidijo prijave na svoja pripravništva'''
-
     username = request.get_cookie("uporabnik")
     rola = request.get_cookie("rola")
     
     if rola != 'podjetje':
         raise redirect(url('index'))
     
+    podjetje = service.dobi_podjetje_dto(username)
+    if not podjetje:
+        return template('napaka.html', napaka="Profil podjetja ne obstaja.")
+
+    vsa_pripravnistva = service.dobi_vsa_pripravnistva_dto()
+    # preveri, da je p.podjetje == podjetje.username ali podjetje.ime
+    pripravnistva = [p for p in vsa_pripravnistva if p.podjetje == podjetje.ime]
+    
     prijave = service.dobi_prijave_podjetja_dto(username)
     
-    return template('podjetje_home.html', prijave=prijave, username=username, napaka=None)
+    return template('podjetje_home.html', prijave=prijave, pripravnistva=pripravnistva, podjetje=podjetje, username=username, napaka=None)
 
 # ------------------------------- PROFIL PODJETJA ------------------------------
 
@@ -506,15 +512,9 @@ def podjetje_profil():
     if not podjetje:
         return template('napaka.html', napaka="Profil podjetja ne obstaja.")
 
-    # Pridobimo podatke o podjetju
-    podjetje = service.dobi_podjetje_dto(username)
-
-    vsa_pripravnistva = service.dobi_vsa_pripravnistva_dto()
-    pripravnistva = [p for p in vsa_pripravnistva if p.podjetje == podjetje.ime]
-
     if rola != "podjetje":
         return template('napaka.html', napaka="Profil podjetje ne obstaja.")
-    return template('podjetje_profil.html', pripravnistva=pripravnistva, podjetje=podjetje, username=username, napaka=None)
+    return template('podjetje_profil.html', podjetje=podjetje, username=username, napaka=None)
 
 
 @get('/podjetje/profil/uredi')
@@ -564,18 +564,6 @@ def podjetje_uredi_post():
 
 
 # ------------------------------- DODAJ NOVO PRIPRAVNIŠTVO ------------------------------
-
-#@get('/pripravnistva')
-#@cookie_required
-#def pripravnistva_list():
-#    rola = request.get_cookie("rola")
-#    pripravnistva_dto = service.dobi_vsa_pripravnistva_dto()
-#
-#    # Dobimo username podjetja iz piškotka
-#    username = request.get_cookie("uporabnik")
-#    podjetje = service.dobi_podjetje(username) if rola == 'podjetje' else None
-#
-#    return template('novo_pripravnistvo.html', pripravnistva=pripravnistva_dto, podjetje=podjetje, rola=rola, napaka=None)
 
 @get('/pripravnistvo/dodaj', name='pripravnistvo_dodaj_get')
 @cookie_required
@@ -636,7 +624,7 @@ def pripravnistvo_uredi_get(id):
 
     pripravnistvo = service.dobi_pripravnistvo(id)
     if not pripravnistvo:
-        redirect(url('podjetje_profil'))
+        redirect(url('podjetje_home'))
 
     return template(
         'pripravnistvo_uredi.html',
@@ -673,7 +661,7 @@ def pripravnistvo_uredi_post(id):
             napaka=f"Napaka pri posodabljanju: {e}"
         )
     
-    redirect(url('podjetje_profil'))
+    redirect(url('podjetje_home'))
 
 # ------------------------------- OGLED PRIJAV NA PRIPRAVNIŠTVO ------------------------------
 
@@ -705,27 +693,30 @@ def pripravnistvo_prijave(id):
         prijave=prijave_s_podatki
     )
 
+@post('/prijava/posodobi_status/<id_prijave>', name='posodobi_status')
+@cookie_required
+def posodobi_status(id_prijave):
+    ''' Posodobi status prijave '''
+    nov_status = request.forms.get('nov_status')
+    prijava_id = int(id_prijave)
+    
+    if not nov_status:
+        # Če status ni poslan, se vrnemo nazaj z napako
+        referer = request.headers.get('Referer')
+        if referer:
+            return template("napaka.html", napaka="Napaka: Status ni bil izbran.")
+        else:
+            redirect(url('podjetje_home'))
 
-
-
-# @post('/prijava/posodobi/<id:int>')
-# @cookie_required
-# def prijava_posodobi_status(id):
-#    username = request.get_cookie("uporabnik")
-#    rola = request.get_cookie("rola")
-#    if rola != 'podjetje':
-#        redirect(url('index'))
-#    
-#    status = request.forms.get('status')
-#    prijava = service.dobi_prijavo_by_id(id) # Predpostavimo metodo, ki dobi prijavo po ID-ju
-#    
-#    if prijava:
-#        prijava.status = status
-#        service.posodobi_prijavo(prijava)
-#    
-#    redirect(url('podjetje_prijave')) # Preusmerimo nazaj na seznam prijav
-
-
+    service.posodobi_status_prijave(prijava_id, nov_status)
+    
+    # Preusmerimo nazaj na isto stran
+    referer = request.headers.get('Referer')
+    if referer:
+        redirect(referer)
+    else:
+        # Če referer ni na voljo, preusmerimo na domačo stran podjetja
+        redirect(url('podjetje_home'))
 
 # ------------------------------- POGANJANJE APPA ------------------------------
 
