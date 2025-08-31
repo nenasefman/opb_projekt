@@ -48,9 +48,7 @@ def index():
     if rola == 'student':
         raise redirect(url('student_home'))
     elif rola == 'podjetje':
-        raise redirect(url('podjetje_home'))
-    elif rola == 'admin':
-        redirect(url('admin'))
+        redirect(url('podjetje_home'))
         return template('prijava.html', uporabnik=None, rola=None, napaka=None)
     
 
@@ -142,9 +140,7 @@ def registracija_post():
     if role == 'student':
         redirect(url('student_registracija'))
     elif role == 'podjetje':
-        redirect(url('podjetje_registracija'))
-    elif role == 'admin':
-        redirect(url('admin_registracija'))  
+        redirect(url('podjetje_registracija')) 
 
 # ------------------------------- Registracija študenta ------------------------------
 
@@ -319,8 +315,10 @@ def student_uredi_get():
 def student_uredi_post():
     username = request.get_cookie("uporabnik")
     rola = request.get_cookie("rola")
+
     if rola != "student":
         redirect(url('index'))
+
     # Originalni podatki študenta
     student_og = service.dobi_studenta(username)
     # Podatki iz obrazca
@@ -488,6 +486,7 @@ def podjetje_home():
 def podjetje_profil():
     username = request.get_cookie("uporabnik")
     rola = request.get_cookie("rola")
+
     if rola != "podjetje":
         redirect(url('index'))
 
@@ -511,6 +510,7 @@ def podjetje_profil():
 def podjetje_uredi_get():
     username = request.get_cookie("uporabnik")
     rola = request.get_cookie("rola")
+
     if rola != "podjetje":
         redirect(url('index'))
     podjetje = service.dobi_podjetje(username)
@@ -524,8 +524,10 @@ def podjetje_uredi_get():
 def podjetje_uredi_post():
     username = request.get_cookie("uporabnik")
     rola = request.get_cookie("rola")
+
     if rola != "podjetje":
         redirect(url('index'))
+        
     # Originalni podatki podjetja
     podjetje_og = service.dobi_podjetje(username)
     # Podatki iz obrazca

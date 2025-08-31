@@ -24,9 +24,20 @@
         .btn-primary {
             background-color: #ff7b00;
             border: none;
+            color: #fff;
         }
         .btn-primary:hover {
             background-color: #e66a00;
+        }
+        /* NOV RAZRED ZA ORANŽEN GUMB (PRIJAVA) */
+        .btn-orange-outline {
+            background-color: #ffa64d;
+            color: #fff;
+            border: none;
+        }
+        .btn-orange-outline:hover {
+            background-color: #ffa64d;
+            color: #fff;
         }
         .form-label {
             font-weight: 500;
@@ -69,7 +80,6 @@
                 <select id="role" name="role" class="form-select" required>
                     <option value="student" % if role == 'student': % selected % end %>Študent</option>
                     <option value="podjetje" % if role == 'podjetje': % selected % end %>Podjetje</option>
-                    <option value="admin" % if role == 'admin': % selected % end %>Admin</option>
                 </select>
             </div>
 
@@ -79,7 +89,7 @@
         <hr>
         <p class="text-center mt-3">
             Že imaš račun? 
-            <a href="/prijava" class="btn btn-secondary btn-sm">Prijava</a>
+            <a href="/prijava" class="btn btn-orange-outline btn-sm">Prijava</a>
         </p>
     </div>
 </div>
